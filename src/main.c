@@ -1,10 +1,11 @@
 #include <stdio.h>
-#include "artigo.h"
+#include "../include/artigo.h"
 
-int main(int argc, const char *argv[])
+int main()
 {
-    artigo a = create_artigo("nome", "descr", 200, 53);
-    printf("Teste teste 123\n"); 
+    Artigo a = create_artigo("nome", "descr", 200, 53);
+    printf("Teste teste 123\n");
     print_artigo(a);
     return 0;
 }
+
