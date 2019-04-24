@@ -1,13 +1,15 @@
 #include "../../include/artigo.h"
+
 struct str_artigo{
     int nome;
     int preco;
     int codigo;
 };
 
-Artigo create_artigo(int n, int p, int code){
+Artigo create_artigo(char* n, int p, int code){
     Artigo a = malloc(sizeof(struct str_artigo));
-    a->nome = n;
+    save_name(n);
+    a->nome = 53;
     a->preco = p;
     a->codigo = code;
 
@@ -35,16 +37,27 @@ int get_code(Artigo a){
 }
 
 void save_artigo(Artigo a){
-    int fd = open("../database/ARTIGOS", O_WRONLY);
+    int fd = open("../database/ARTIGOS", O_WRONLY | O_APPEND);
     char str[64] = " ";
-    sprintf(str, "%d %d", a->nome, a->preco);
+    sprintf(str, "%d %d\n", a->nome, a->preco);
     printf("String: \"%s\"\n", str);
 
     if (write(fd, str, 64) > 1) {
-        printf("Success.\n");
+        printf("Success ARTIGOS.\n");
     }
     else {
-        printf("Error writing to file.\n");
+        printf("Error writing to file ARTIGOS.\n");
+    }
+}
+
+void save_name(char* name){
+    int fd = open("../database/STRINGS", O_WRONLY | O_APPEND);
+    if (write(fd, name, sizeof(name)+1) > 1) {
+        write(fd, "\n", 1);
+        printf("Success STRINGS.\n");
+    }
+    else {
+        printf("Error writing to file STRINGS.\n");
     }
 }
 

@@ -26,3 +26,6 @@ clean:
 	rm -f program
 	rm -f main.o
 
+resetDB:
+	rm -f ../database/*
+	touch ../database/ARTIGOS ../database/STOCKS ../database/STRINGS ../database/VENDAS
