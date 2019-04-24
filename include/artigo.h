@@ -16,6 +16,6 @@ int get_preco(Artigo a);
 int get_code(Artigo a);
 void print_artigo(Artigo a);
 void save_artigo(Artigo a);
-void save_name(char* name);
+int save_name(char* name);
 #endif
 

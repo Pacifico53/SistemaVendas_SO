@@ -8,8 +8,8 @@ struct str_artigo{
 
 Artigo create_artigo(char* n, int p, int code){
     Artigo a = malloc(sizeof(struct str_artigo));
-    save_name(n);
-    a->nome = 53;
+    
+    a->nome = save_name(n);
     a->preco = p;
     a->codigo = code;
 
@@ -50,7 +50,7 @@ void save_artigo(Artigo a){
     }
 }
 
-void save_name(char* name){
+int save_name(char* name){
     int fd = open("../database/STRINGS", O_WRONLY | O_APPEND);
     if (write(fd, name, sizeof(name)+1) > 1) {
         write(fd, "\n", 1);
@@ -59,6 +59,7 @@ void save_name(char* name){
     else {
         printf("Error writing to file STRINGS.\n");
     }
+    return lseek(fd, 0, SEEK_CUR)/(sizeof(name)+1);
 }
 
 void print_artigo(Artigo a){
