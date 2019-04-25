@@ -65,6 +65,10 @@ int isValidComandcmd(char* cmd0, char* cmd1, char* cmd2){
       return 0;
     }
 }
+  // check if m é valido
+  if( strcmp(cmd0,"m") == 0){
+      return 4;
+}
 
   return 0;
 }
@@ -91,11 +95,12 @@ int isValidComandcmd(char* cmd0, char* cmd1, char* cmd2){
 
 
 void menuShow(){
-	printf("-----------------MANUTENÇÃO DE ARTIGOS-----------------------\n");
+	printf("------------------MANUTENÇÃO DE ARTIGOS-----------------------\n");
 	printf(" i <nome> preço	          --> insere novo artigo, mostra código\n");
 	printf(" n <código> <novo nome>   --> altera nome do artigo\n");
   printf(" p <código> <novo preço>  --> altera preço do artigo\n" );
-	printf(" outros comandos a adicionar\n");
+  printf(" m                        --> mostra menu\n" );
+	printf("--------------------------------------------------------------\n");
   printf("\n");
 }
 
@@ -144,24 +149,27 @@ int main(){
       int valid;
 		    //swich options menu
         if( (valid=isValidComandcmd(comands[0], comands[1], comands[2])) > 0 ){
-          printf("Comando válido cmd0\n");
+          printf("COMANDO VALIDO\n");
 
 
           switch(valid){
-            case 1 : printf("entrou i\n");
+            case 1 : printf("ENTROU I:%s STRING:%s INT:%s\n", comands[0], comands[1], comands[2]);
                       break;
 
-            case 2 : printf("entrou n\n");
+            case 2 : printf("ENTROU N:%s INT:%s STRING:%s\n", comands[0], comands[1], comands[2]);
                       break;
 
-            case 3 : printf("entrou p\n");
+            case 3 : printf("ENTROU P:%s INT:%s INT:%s\n", comands[0], comands[1], comands[2]);
+                      break;
+
+            case 4 : printf("MENU M:%s\n", comands[0]);
+                     menuShow();
                       break;
 
            default: printf("-----------------------\n");
         }
       }else{
-        perror("Invalid comand type/input, please insert one of the commands listed");
-        menuShow();
+        perror("Invalid comand type/input, please insert one of the commands listed     use m for MENU");
       }
 
     }else{
