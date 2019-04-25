@@ -32,25 +32,41 @@ int readline(char *buffer, size_t size){
     return 1;
 }
 
-int isValidComand(char* cmd0, char* cmd1, char*cmd2){
-    if(strcmp(cmd0,"i") == 0 || strcmp(cmd0,"n") == 0 || strcmp(cmd0,"p") == 0){
-      int f1=1,f2=1;
-      //check if cmd1 is a string
-      for(int i=0; cmd1[i] != '\0'; i++){
-        if(!isalpha(cmd1[i])){
-          f1 = 0;
+int isValidComandcmd(char* cmd0, char* cmd1, char* cmd2){
+    //check if i string int é valido    atoi string retorna 0     atoi inteiro  retorna >0
+    if( strcmp(cmd0,"i") == 0){
+        int cmd1i = atoi(cmd1);
+        int cmd2i = atoi(cmd2);
+        if( cmd1i == 0 && cmd2i > 0){
+          return 1;
+        } else{
+          return 0;
         }
+    }
+
+    //check if n int string é valido
+    if( strcmp(cmd0,"n") == 0){
+      int cmd1n = atoi(cmd1);
+      int cmd2n = atoi(cmd2);
+      if( cmd1n > 0 && cmd2n == 0){
+        return 2;
+      } else{
+        return 0;
       }
-      //check if cmd2 is a number
-      for(int j=0; cmd2[j] != '\0'; j++){
-        if(!isdigit(cmd2[j])){
-          f2 = 0;
-        }
-      }
-      return (f1&&f2);
-    }else{
+  }
+
+  // check if p int int é valido
+  if( strcmp(cmd0,"p") == 0){
+    int cmd1p = atoi(cmd1);
+    int cmd2p = atoi(cmd2);
+    if( cmd1p > 0 && cmd2p > 0){
+      return 3;
+    } else{
       return 0;
     }
+}
+
+  return 0;
 }
 
 
@@ -125,19 +141,28 @@ int main(){
 			printf("Token0: %s  Token1: %s  Token2: %s\n", comands[0], comands[1], comands[2]);
       printf("\n");
 
-
-		//swich options menu
-    if(isValidComand( comands[0], comands[1], comands[2]) ){
-      printf("Comando válido\n");
-
-    }else{
-      perror("Invalid comand type/input, please insert one of the commands listed");
-      menuShow();
-    }
+      int valid;
+		    //swich options menu
+        if( (valid=isValidComandcmd(comands[0], comands[1], comands[2])) > 0 ){
+          printf("Comando válido cmd0\n");
 
 
+          switch(valid){
+            case 1 : printf("entrou i\n");
+                      break;
 
+            case 2 : printf("entrou n\n");
+                      break;
 
+            case 3 : printf("entrou p\n");
+                      break;
+
+           default: printf("-----------------------\n");
+        }
+      }else{
+        perror("Invalid comand type/input, please insert one of the commands listed");
+        menuShow();
+      }
 
     }else{
 			perror("No line readed");
