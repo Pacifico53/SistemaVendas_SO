@@ -12,6 +12,7 @@ int main(){
     save_artigo(a);
     save_artigo(b);
     save_artigo(c);
+    seek_artigo(2);
     return 0;
 }
 
