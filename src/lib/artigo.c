@@ -39,7 +39,7 @@ int get_index_nome(Artigo a){
 }
 
 char* get_nome(Artigo a){
-    int fd = open("../database/STRINGS", O_RDONLY);
+    int fd = open("database/STRINGS", O_RDONLY);
     lseek(fd, a->nome, SEEK_SET);
     char n[64];
 
@@ -65,7 +65,7 @@ int get_code(Artigo a){
 }
 
 void save_artigo(Artigo a){
-    int fd = open("../database/ARTIGOS", O_WRONLY | O_APPEND);
+    int fd = open("database/ARTIGOS", O_WRONLY | O_APPEND);
     char str[64] = "";
     snprintf(str, 64, "%d %d", a->nome, a->preco);
 
@@ -82,11 +82,10 @@ void save_artigo(Artigo a){
 }
 
 int save_name(char* name){
-    int fd = open("../database/STRINGS", O_WRONLY | O_APPEND);
+    int fd = open("database/STRINGS", O_WRONLY | O_APPEND);
 
     int r = lseek(fd, 0, SEEK_END);
-    if (write(fd, name, strlen(name)) > 1) {
-        write(fd, "\n", 1);
+    if ((write(fd, name, strlen(name)) > 0) && (write(fd, "\n", 1) > 0)) {
         printf("Success writing to file STRINGS.\n");
     }
     else {
@@ -105,7 +104,7 @@ void print_artigo(Artigo a){
 }
 
 void seek_artigo(int codigo){
-    int fd = open("../database/ARTIGOS", O_RDONLY);
+    int fd = open("database/ARTIGOS", O_RDONLY);
     int pos = (codigo-1) * 65;
     lseek(fd, pos, SEEK_SET);
 

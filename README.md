@@ -1,9 +1,7 @@
 # SistemaVendas_SO
 Sistemas Operativo 18/19
 
-Como Executar:
-
-`cd src`
+Como compilar tudo:
 
 `make`
 
