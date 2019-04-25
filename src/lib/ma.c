@@ -12,18 +12,15 @@
 #define LINE_BLOCK_SIZE 128
 
 
-int readline(char *buffer, size_t size)
-{
+int readline(char *buffer, size_t size){
+
     size_t cnt = 0;
     char c;
-
     if(buffer == NULL || size == 0)
         return 0;
 
-    while(read(STDIN_FILENO, &c, 1) == 1 && cnt < size - 1)
-    {
-        if(c == '\n')
-        {
+    while(read(STDIN_FILENO, &c, 1) == 1 && cnt < size - 1){
+        if(c == '\n'){
             buffer[cnt] = 0;
             return 1;
         }
@@ -33,6 +30,27 @@ int readline(char *buffer, size_t size)
 
     buffer[cnt] = 0; // making sure it's 0-terminated
     return 1;
+}
+
+int isValidComand(char* cmd0, char* cmd1, char*cmd2){
+    if(strcmp(cmd0,"i") == 0 || strcmp(cmd0,"n") == 0 || strcmp(cmd0,"p") == 0){
+      int f1=1,f2=1;
+      //check if cmd1 is a string
+      for(int i=0; cmd1[i] != '\0'; i++){
+        if(!isalpha(cmd1[i])){
+          f1 = 0;
+        }
+      }
+      //check if cmd2 is a number
+      for(int j=0; cmd2[j] != '\0'; j++){
+        if(!isdigit(cmd2[j])){
+          f2 = 0;
+        }
+      }
+      return (f1&&f2);
+    }else{
+      return 0;
+    }
 }
 
 
@@ -60,8 +78,9 @@ void menuShow(){
 	printf("-----------------MANUTENÇÃO DE ARTIGOS-----------------------\n");
 	printf(" i <nome> preço	          --> insere novo artigo, mostra código\n");
 	printf(" n <código> <novo nome>   --> altera nome do artigo\n");
-        printf(" p <código> <novo preço>  --> altera preço do artigo\n" );
+  printf(" p <código> <novo preço>  --> altera preço do artigo\n" );
 	printf(" outros comandos a adicionar\n");
+  printf("\n");
 }
 
 int main(){
@@ -76,52 +95,51 @@ int main(){
 	if( (fdStrings=open("strings.txt", O_RDWR|O_CREAT,0666)) == -1){
 		perror(" ERROR : opening strings.txt");
 		return 1;
-	}
+  }
 
 	menuShow();
 	int rr;
-
-	char **aux;
+  int rl;
   char buf[LINE_BLOCK_SIZE];
 
 	while(1){
-		int rl;
-		if( ( rl=readline(buf,LINE_BLOCK_SIZE)) ) {
 
-		printf("Your string: %s\n", buf);
-		printf("%d\n",strlen(buf));
-		//char *all = strtok(buf,"\n");
-		//printf("Your string2: %s\n", all);
-		//printf("%d\n",strlen(all));
-
-		//partir linha em token(3 tokens)	pode-se fazer numa função auxiliar
-		int i=0;
-		char *token;
-		char *comands[3];
-		token=strtok(buf," ");
-		while(token != NULL && i < 3){
-			comands[i] = token;
-			i++;
-			token=strtok(NULL," ");
-		}
+	   if( (rl=readline(buf,LINE_BLOCK_SIZE)) > 0 ) {
+       printf("Linha lida : %s  Tamanho linha : %i bytes\n", buf, strlen(buf));
+		       //char *all = strtok(buf,"\n");
+		      //printf("Your string2: %s\n", all);
+		       //printf("%d\n",strlen(all));
 
 
-		for(int i=0; i<3; i++){
-			printf("%s\n", comands[i]);
-		}
-/*
+      //partir linha em token(3 tokens)	pode-se fazer numa função auxiliar
+      int i=0;
+      char *token;
+      char *comands[3];
+      token=strtok(buf," ");
+		    while(token != NULL && i < 3){
+          comands[i] = token;
+			    i++;
+          token=strtok(NULL," ");
+		    }
+      //imprimir 3 tokens para ver se estão corretos
+			printf("Token0: %s  Token1: %s  Token2: %s\n", comands[0], comands[1], comands[2]);
+      printf("\n");
+
+
 		//swich options menu
-		if(comands[0] == 'i' || comands[0] == 'n' || comands[0] == 'p'){
-			if( strcmp(comands[1],"sim")){
-				printf("vamos lá");
-			}else{
+    if(isValidComand( comands[0], comands[1], comands[2]) ){
+      printf("Comando válido\n");
+
+    }else{
+      perror("Invalid comand type/input, please insert one of the commands listed");
+      menuShow();
+    }
 
 
-			}
-		}else{
-		switch(cmd[0]){
-		*/
-		} else{
+
+
+
+    }else{
 			perror("No line readed");
 		}
 
