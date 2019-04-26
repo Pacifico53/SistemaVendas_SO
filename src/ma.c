@@ -7,6 +7,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "../include/artigo.h"
 
 #define LINE_BLOCK_SIZE 128
 
@@ -81,7 +82,21 @@ void menuShow(){
     printf("\n");
 }
 
+
+void register_new_artigo(char* n, int p, int code){
+    Artigo a = create_artigo(n, p, code);
+    save_artigo(a);
+    free(a);
+}
+
+void change_nome_artigo(int code, char* n){
+    Artigo a = seek_artigo(code);
+    set_nome(a, n);
+    free(a);
+}
+
 int main(){
+    int currCod = 1;
     menuShow();
     int rl;
     char buf[LINE_BLOCK_SIZE];
@@ -111,15 +126,15 @@ int main(){
             if( (valid=isValidComandcmd(comands[0], comands[1], comands[2])) > 0 ){
                 printf("COMANDO VALIDO\n");
                 switch(valid){
-                    case 1 : printf("ENTROU I:%s STRING:%s INT:%s\n", comands[0], comands[1], comands[2]);
-                             break;
-                    case 2 : printf("ENTROU N:%s INT:%s STRING:%s\n", comands[0], comands[1], comands[2]);
-                             break;
-                    case 3 : printf("ENTROU P:%s INT:%s INT:%s\n", comands[0], comands[1], comands[2]);
-                             break;
-                    case 4 : printf("MENU M:%s\n", comands[0]);
-                             menuShow();
-                             break;
+                    case 1: register_new_artigo(comands[1], atoi(comands[2]), currCod);
+                            break;
+                    case 2: change_nome_artigo(atoi(comands[1]), comands[2]);
+                            break;
+                    case 3: printf("ENTROU P:%s INT:%s INT:%s\n", comands[0], comands[1], comands[2]);
+                            break;
+                    case 4: printf("MENU M:%s\n", comands[0]);
+                            menuShow();
+                            break;
                     default: printf("-----------------------\n");
                 }
             }
