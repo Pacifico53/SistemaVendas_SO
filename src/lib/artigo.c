@@ -16,18 +16,44 @@ Artigo create_artigo(char* n, int p, int code){
     return a;
 }
 
-Artigo fetch_artigo(int n, int p, int code){
+Artigo seek_artigo(int code){
+    int fd = open("database/ARTIGOS", O_RDONLY);
+    int pos = (code-1) * 65;
+    lseek(fd, pos, SEEK_SET);
+
+    char buf[64] = "";
+    if (read(fd, buf, 64) != 64) {
+        printf("Erro a ler\n");
+    }
+    else {
+        printf("Li isto: \'%s\'\n", buf);
+    }
+
+    char* token;
+    char* info[2];
+    int i = 0;
+
+    token = strtok(buf, " ");
+    while (token) {
+        info[i] = strdup(token);
+        i++;
+        token = strtok(NULL, " ");
+    }
+
     Artigo a = malloc(sizeof(struct str_artigo));
 
-    a->nome = n;
-    a->preco = p;
+    a->nome = atoi(info[0]);
+    a->preco = atoi(info[1]);
     a->codigo = code;
-
+    
+    print_artigo(a);
     return a;
 }
 
-void set_nome(Artigo a, int n){
-    a->nome = n;
+
+void set_nome(Artigo a, char* n){
+    int newCode = save_name(n);
+    a->nome = newCode;
 }
 
 void set_preco(Artigo a, int p){
@@ -39,7 +65,7 @@ int get_index_nome(Artigo a){
 }
 
 char* get_nome(Artigo a){
-    int fd = open("../database/STRINGS", O_RDONLY);
+    int fd = open("database/STRINGS", O_RDONLY);
     lseek(fd, a->nome, SEEK_SET);
     char n[64];
 
@@ -65,7 +91,7 @@ int get_code(Artigo a){
 }
 
 void save_artigo(Artigo a){
-    int fd = open("../database/ARTIGOS", O_WRONLY | O_APPEND);
+    int fd = open("database/ARTIGOS", O_WRONLY | O_APPEND);
     char str[64] = "";
     snprintf(str, 64, "%d %d", a->nome, a->preco);
 
@@ -82,11 +108,10 @@ void save_artigo(Artigo a){
 }
 
 int save_name(char* name){
-    int fd = open("../database/STRINGS", O_WRONLY | O_APPEND);
+    int fd = open("database/STRINGS", O_WRONLY | O_APPEND);
 
     int r = lseek(fd, 0, SEEK_END);
-    if (write(fd, name, strlen(name)) > 1) {
-        write(fd, "\n", 1);
+    if ((write(fd, name, strlen(name)) > 0) && (write(fd, "\n", 1) > 0)) {
         printf("Success writing to file STRINGS.\n");
     }
     else {
@@ -102,33 +127,5 @@ void print_artigo(Artigo a){
     printf("Posicao do Nome = %d\n", get_index_nome(a));
     printf("Preço = %d\n", get_preco(a));
     printf("Codigo = %d\n====\n", get_code(a));
-}
-
-void seek_artigo(int codigo){
-    int fd = open("../database/ARTIGOS", O_RDONLY);
-    int pos = (codigo-1) * 65;
-    lseek(fd, pos, SEEK_SET);
-
-    char buf[64] = "";
-    if (read(fd, buf, 64) != 64) {
-        printf("Erro a ler\n");
-    }
-    else {
-        printf("Li isto: \'%s\'\n", buf);
-    }
-
-    char* token;
-    char* info[2];
-    int i = 0;
-
-    token = strtok(buf, " ");
-    while (token) {
-        info[i] = strdup(token);
-        i++;
-        token = strtok(NULL, " ");
-    }
-
-    Artigo a = fetch_artigo(atoi(info[0]), atoi(info[1]), codigo);
-    print_artigo(a);
 }
 
