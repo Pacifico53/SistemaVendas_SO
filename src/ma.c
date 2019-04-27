@@ -12,7 +12,7 @@
 #define LINE_BLOCK_SIZE 128
 
 
-int readline(char *buffer, size_t size){
+int readline(char *buffer, size_t size){	//retorna os bytes lidos
     size_t cnt = 0;
     char c;
     if(buffer == NULL || size == 0)
@@ -21,13 +21,13 @@ int readline(char *buffer, size_t size){
     while(read(STDIN_FILENO, &c, 1) == 1 && cnt < size - 1){
         if(c == '\n'){
             buffer[cnt] = 0;
-            return 1;
+            return cnt;
         }
         buffer[cnt++] = c;
     }
 
     buffer[cnt] = 0; // making sure it's 0-terminated
-    return 1;
+    return cnt;
 }
 
 int isValidComandcmd(char* cmd0, char* cmd1, char* cmd2){
