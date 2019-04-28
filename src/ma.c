@@ -12,22 +12,22 @@
 #define LINE_BLOCK_SIZE 128
 
 
-int readline(char *buffer, size_t size){	//retorna os bytes lidos
-    size_t cnt = 0;
+int readline(char *buffer, int size){	//retorna os bytes lidos
+    int i = 0;
     char c;
     if(buffer == NULL || size == 0)
         return 0;
 
-    while(read(STDIN_FILENO, &c, 1) == 1 && cnt < size - 1){
+    while(read(1, &c, 1) == 1 && i < size - 1){
         if(c == '\n'){
-            buffer[cnt] = 0;
-            return 1;
+            buffer[i] = 0;
+            return i;
         }
-        buffer[cnt++] = c;
+        buffer[i++] = c;
     }
 
-    buffer[cnt] = 0; // making sure it's 0-terminated
-    return 1;
+    buffer[i] = 0; // making sure it's 0-terminated
+    return i;
 }
 
 int isValidComandcmd(char* cmd0, char* cmd1, char* cmd2){
@@ -119,10 +119,10 @@ int main(){
                 i++;
                 token=strtok(NULL," ");
             }
-	    if( strcmp(comands[0],"m") != 0 && i <=1){
+	   /* if( strcmp(comands[0],"m") != 0 && i <=1){
 		printf("Invalid Command ---- corrigir isto perguntar black maaan\n");
 		break;
-	    }
+	    }*/
 
             //imprimir 3 tokens para ver se estão corretos
             printf("Token0: %s  Token1: %s  Token2: %s\n", comands[0], comands[1], comands[2]);
@@ -143,7 +143,7 @@ int main(){
                             break;
                     default: printf("-----------------------\n");
                 }
-		fflush(stdout);
+		memset(buf, 0, LINE_BLOCK_SIZE);	//importante, limpa  buff
             }
             else{
                 perror("Invalid comand type/input, please insert one of the commands listed     use m for MENU");
