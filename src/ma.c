@@ -119,6 +119,11 @@ int main(){
                 i++;
                 token=strtok(NULL," ");
             }
+	    if( strcmp(comands[0],"m") != 0 && i <=1){
+		printf("Invalid Command ---- corrigir isto perguntar black maaan\n");
+		break;
+	    }
+
             //imprimir 3 tokens para ver se estão corretos
             printf("Token0: %s  Token1: %s  Token2: %s\n", comands[0], comands[1], comands[2]);
             printf("\n");
