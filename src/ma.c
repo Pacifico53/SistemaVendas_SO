@@ -21,18 +21,19 @@ int readline(char *buffer, size_t size){	//retorna os bytes lidos
     while(read(STDIN_FILENO, &c, 1) == 1 && cnt < size - 1){
         if(c == '\n'){
             buffer[cnt] = 0;
-            return cnt;
+            return 1;
         }
         buffer[cnt++] = c;
     }
 
     buffer[cnt] = 0; // making sure it's 0-terminated
-    return cnt;
+    return 1;
 }
 
 int isValidComandcmd(char* cmd0, char* cmd1, char* cmd2){
     //check if i string int é valido    atoi string retorna 0     atoi inteiro  retorna >0
     if( strcmp(cmd0,"i") == 0){
+
         int cmd1i = atoi(cmd1);
         int cmd2i = atoi(cmd2);
         if( cmd1i == 0 && cmd2i > 0){
@@ -137,6 +138,7 @@ int main(){
                             break;
                     default: printf("-----------------------\n");
                 }
+		fflush(stdout);
             }
             else{
                 perror("Invalid comand type/input, please insert one of the commands listed     use m for MENU");

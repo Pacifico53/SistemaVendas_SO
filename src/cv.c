@@ -34,14 +34,32 @@ int isValidComand(){
 int main(int argc, char* argv[]){
 	char buffer[LINE_BLOCK_SIZE];
 	int rl;
-	while(1){
-		if( (rl=readline(buffer,LINE_BLOCK_SIZE)) ){
-			write(1,buffer,rl);
+	int cv_sv_fifo;
+	char buf[LINE_BLOCK_SIZE];
+	int sv_pipe;
 
+	//create fifo
+	if( (cv_sv_fifo == mkfifo("sv_sv_fifo",0666)) > 0){
+		//open fifo
+		if( (sv_pipe = open("sv_sv_fifo", O_WRONLY)) == 0){
+			printf("pipe opened\n");
 		}else{
-			perror("deu merda a ler");
+			perror("opening pipe");
 			return 1;
-		}		
-	}	
+		}
+
+		while(1){
+			if( (rl=readline(buffer,LINE_BLOCK_SIZE)) ){
+				write(sv_pipe,buffer,rl);
+
+			}else{
+				perror("deu merda a ler");
+				return 1;
+			}		
+		}	
+	}else{
+		perror("fifo creation error");
+		return 0;
+	}
 	return 0;
 }
