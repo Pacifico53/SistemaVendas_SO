@@ -54,10 +54,12 @@ Artigo seek_artigo(int code){
 void set_nome(Artigo a, char* n){
     int newCode = save_name(n);
     a->nome = newCode;
+    save_artigo(a);
 }
 
 void set_preco(Artigo a, int p){
     a->preco = p;
+    save_artigo(a);
 }
 
 int get_index_nome(Artigo a){
@@ -91,11 +93,13 @@ int get_code(Artigo a){
 }
 
 void save_artigo(Artigo a){
-    int fd = open("database/ARTIGOS", O_WRONLY | O_APPEND);
+    int fd = open("database/ARTIGOS", O_WRONLY);
     char str[64] = "";
+    int pos = (a->codigo-1) * 65;
     snprintf(str, 64, "%d %d", a->nome, a->preco);
 
-    printf("%d\n", (int)lseek(fd, 0, SEEK_END));
+    lseek(fd, pos, SEEK_SET);
+
     if ((write(fd, str, 64) > 1) && (write(fd, "\n", 1) > 0)) {
 
         printf("Success writing to file ARTIGOS.\n");

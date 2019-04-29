@@ -96,8 +96,16 @@ void change_nome_artigo(int code, char* n){
     free(a);
 }
 
+
+void change_preco_artigo(int code, int p){
+    Artigo a = seek_artigo(code);
+    set_preco(a, p);
+    free(a);
+}
+
 int main(){
-    int currCod = 1;
+    int fdArtigos = open("database/ARTIGOS", O_RDONLY);
+    int currCod = (lseek(fdArtigos, 0, SEEK_END) / 65) + 1;
     menuShow();
     int rl;
     char buf[LINE_BLOCK_SIZE];
@@ -136,7 +144,7 @@ int main(){
                             break;
                     case 2: change_nome_artigo(atoi(comands[1]), comands[2]);
                             break;
-                    case 3: printf("ENTROU P:%s INT:%s INT:%s\n", comands[0], comands[1], comands[2]);
+                    case 3: change_preco_artigo(atoi(comands[1]), atoi(comands[2]));
                             break;
                     case 4: printf("MENU M:%s\n", comands[0]);
                             menuShow();
