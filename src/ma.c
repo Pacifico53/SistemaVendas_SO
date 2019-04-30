@@ -12,7 +12,7 @@
 #define LINE_BLOCK_SIZE 128
 
 
-int readline(char *buffer, int size){	//retorna os bytes lidos
+int readline(char *buffer, int size){   //retorna os bytes lidos
     int i = 0;
     char c;
     if(buffer == NULL || size == 0)
@@ -116,6 +116,7 @@ void change_preco_artigo(int code, int p){
 int main(){
     int fdArtigos = open("database/ARTIGOS", O_RDONLY);
     int currCod = (lseek(fdArtigos, 0, SEEK_END) / 65) + 1;
+    //close(fdArtigos);
     menuShow();
     int rl;
 
@@ -149,7 +150,7 @@ int main(){
             if( (validcmd=isValidComandcmd(comands[0], comands[1], comands[2])) > 0 ){
                 printf("COMANDO VALIDO\n");
                 switch(validcmd){
-                    case 1: register_new_artigo(comands[1], atoi(comands[2]), currCod);
+                    case 1: register_new_artigo(comands[1], atoi(comands[2]), currCod++);
                             break;
                     case 2: change_nome_artigo(atoi(comands[1]), comands[2]);
                             break;
@@ -172,3 +173,4 @@ int main(){
     }
     return 0;
 }
+
