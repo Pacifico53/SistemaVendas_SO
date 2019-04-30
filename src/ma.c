@@ -108,8 +108,8 @@ void menuShow(){
     printf(" i <nome> preço           --> insere novo artigo, mostra código\n");
     printf(" n <código> <novo nome>   --> altera nome do artigo\n");
     printf(" p <código> <novo preço>  --> altera preço do artigo\n" );
-    printf(" c <código>		      --> mostra nome + preço do artigo com esse código\n");
-    printf(" l			      --> lista artigos	código + nome + preço\n");
+    printf(" c <código>		            --> mostra nome + preço do artigo com esse código\n");
+    printf(" l			                  --> lista artigos	código + nome + preço\n");
     printf(" m                        --> mostra menu\n");
     printf("--------------------------------------------------------------\n");
     printf("\n");
@@ -120,6 +120,7 @@ void menuShow(){
 void register_new_artigo(char* n, int p, int code){
     Artigo a = create_artigo(n, p, code);
     save_artigo(a);
+    printf("codigo = %d\n",code);
     free(a);
 }
 
@@ -134,6 +135,18 @@ void change_preco_artigo(int code, int p){
     Artigo a = seek_artigo(code);
     set_preco(a, p);
     free(a);
+}
+
+void show_artigo(int code){
+    Artigo a = seek_artigo(code);
+    //print_artigo(a); ----> seek_artigo já dá print(para testar)
+    free(a);
+}
+
+void list_artigos(int currCod){
+    for(int i=0; i<currCod; i++){
+      show_artigo(i);
+    }
 }
 
 int main(){
@@ -179,11 +192,13 @@ int main(){
                             break;
                     case 3: change_preco_artigo(atoi(comands[1]), atoi(comands[2]));
                             break;
-                    case 4 : printf("c : %s %s\n",comands[0],comands[1]);
+                    case 4: printf("c : %s %s\n",comands[0],comands[1]);
+                            show_artigo(atoi(comands[1]));
                             break;
-                    case 5 : printf("LISTl : %s %s\n",comands[0],comands[1]);
+                    case 5: printf("LIST l : %s %s\n",comands[0],comands[1]);
+                            list_artigos(currCod);
                             break;
-                    case 6: printf("MENU M:%s\n", comands[0]);
+                    case 6: printf("MENU l:%s\n", comands[0]);
                             menuShow();
                             break;
                     default: printf("-----------------------\n");

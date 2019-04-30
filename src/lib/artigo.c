@@ -45,7 +45,7 @@ Artigo seek_artigo(int code){
     a->nome = atoi(info[0]);
     a->preco = atoi(info[1]);
     a->codigo = code;
-    
+
     print_artigo(a);
     return a;
 }
@@ -132,4 +132,3 @@ void print_artigo(Artigo a){
     printf("Preço = %d\n", get_preco(a));
     printf("Codigo = %d\n====\n", get_code(a));
 }
-
