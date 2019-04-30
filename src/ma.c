@@ -108,8 +108,8 @@ void menuShow(){
     printf(" i <nome> preço           --> insere novo artigo, mostra código\n");
     printf(" n <código> <novo nome>   --> altera nome do artigo\n");
     printf(" p <código> <novo preço>  --> altera preço do artigo\n" );
-    printf(" c <código>		            --> mostra nome + preço do artigo com esse código\n");
-    printf(" l			                  --> lista artigos	código + nome + preço\n");
+    printf(" c <código>               --> mostra nome + preço do artigo com esse código\n");
+    printf(" l                        --> lista artigos código + nome + preço\n");
     printf(" m                        --> mostra menu\n");
     printf("--------------------------------------------------------------\n");
     printf("\n");
@@ -145,7 +145,7 @@ void show_artigo(int code){
 }
 
 void list_artigos(int currCod){
-    for(int i=0; i<currCod; i++){
+    for(int i=1; i<currCod; i++){
       show_artigo(i);
     }
 }
@@ -166,7 +166,6 @@ int main(){
         commands[1]=NULL;
         commands[2]=NULL;
         if((rl=readline(buf,LINE_BLOCK_SIZE)) > 0 ) {
-            printf("Linha lida : %s  Tamanho linha : %d bytes\n", buf, (int)strlen(buf));
             //char *all = strtok(buf,"\n");
             //printf("Your string2: %s\n", all);
             //printf("%d\n",strlen(all));
@@ -179,7 +178,6 @@ int main(){
                 token=strtok(NULL," ");
             }
             //imprimir 3 tokens para ver se estão corretos
-            printf("Token0: %s  Token1: %s  Token2: %s\n", commands[0], commands[1], commands[2]);
             int validcmd;
             //swich options menu
             if((validcmd = isValidComandcmd(commands[0], commands[1], commands[2])) > 0 ){
@@ -191,14 +189,11 @@ int main(){
                             break;
                     case 3: change_preco_artigo(atoi(commands[1]), strtof(commands[2], NULL));
                             break;
-                    case 4: printf("c : %s %s\n",commands[0],commands[1]);
-                            show_artigo(atoi(commands[1]));
+                    case 4: show_artigo(atoi(commands[1]));
                             break;
-                    case 5: printf("LIST l : %s %s\n",commands[0],commands[1]);
-                            list_artigos(currCod);
+                    case 5: list_artigos(currCod);
                             break;
-                    case 6: printf("MENU l:%s\n", commands[0]);
-                            menuShow();
+                    case 6: menuShow();
                             break;
                     default: printf("-----------------------\n");
                 }

@@ -27,7 +27,7 @@ Artigo seek_artigo(int code){
         return 0;
     }
     else {
-        printf("Li isto: \'%s\'\n", buf);
+        printf("Artigo com codigo %d encontrado:\n", code);
     }
 
     char* token;
@@ -47,6 +47,7 @@ Artigo seek_artigo(int code){
     a->preco = strtof(info[1], NULL);
     a->codigo = code;
 
+    //Check do artigo
     print_artigo(a);
     return a;
 }
@@ -127,8 +128,9 @@ int save_name(char* name){
 }
 
 void print_artigo(Artigo a){
-    printf("====\nNome = %s\n", get_nome(a));
+    printf("===========\nNome = %s\n", get_nome(a));
     printf("Posicao do Nome = %d\n", get_index_nome(a));
     printf("Preço = %f\n", get_preco(a));
-    printf("Codigo = %d\n====\n", get_code(a));
+    printf("Codigo = %d\n===========\n", get_code(a));
 }
+
