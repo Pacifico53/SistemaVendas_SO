@@ -71,12 +71,33 @@ int isValidComandcmd(char* cmd0, char* cmd1, char* cmd2){
             return 0;
         }
     }
+    // check if c int é válido
+    if( strcmp(cmd0,"c") == 0){
+        if(cmd0 == NULL || cmd1 == NULL){
+            return 0;
+          }
+        int cmd1p = atoi(cmd1);
+        if( cmd1p > 0){
+            return 4;
+        }
+        else{
+            return 0;
+        }
+    }
+    //check if l é válido
+    if(strcmp(cmd0,"l") == 0){
+        if(cmd0 == NULL){
+            return 0;
+          }
+        return 5;
+    }
+
     // check if m é valido
     if(strcmp(cmd0,"m") == 0){
         if(cmd0 == NULL){
             return 0;
           }
-        return 4;
+        return 6;
     }
     return 0;
 }
@@ -87,7 +108,9 @@ void menuShow(){
     printf(" i <nome> preço           --> insere novo artigo, mostra código\n");
     printf(" n <código> <novo nome>   --> altera nome do artigo\n");
     printf(" p <código> <novo preço>  --> altera preço do artigo\n" );
-    printf(" m                        --> mostra menu\n" );
+    printf(" c <código>		      --> mostra nome + preço do artigo com esse código\n");
+    printf(" l			      --> lista artigos	código + nome + preço\n");
+    printf(" m                        --> mostra menu\n");
     printf("--------------------------------------------------------------\n");
     printf("\n");
 }
@@ -155,7 +178,11 @@ int main(){
                             break;
                     case 3: change_preco_artigo(atoi(commands[1]), strtof(commands[2], NULL));
                             break;
-                    case 4: menuShow();
+                    case 4: printf("c : %s %s\n",commands[0],commands[1]);
+                            break;
+                    case 5: printf("LISTl : %s %s\n",commands[0],commands[1]);
+                            break;
+                    case 6: menuShow();
                             break;
                     default: printf("-----------------------\n");
                 }
@@ -170,4 +197,3 @@ int main(){
     }
     return 0;
 }
-
