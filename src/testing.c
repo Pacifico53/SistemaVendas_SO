@@ -5,7 +5,7 @@ int main(){
     int i = 1;
     Artigo a = create_artigo("Televisao Grande", 1259, i++);
     Artigo b = create_artigo("Playstation", 399, i++);
-    Artigo c = create_artigo("XBox 360", 500, i++);
+    Artigo c = create_artigo("XBox 360", 500.23, i++);
     print_artigo(a);
     print_artigo(b);
     print_artigo(c);
@@ -13,6 +13,7 @@ int main(){
     save_artigo(b);
     save_artigo(c);
     seek_artigo(2);
+    printf("teste %f\n", strtof("13.12", NULL));
     return 0;
 }
 

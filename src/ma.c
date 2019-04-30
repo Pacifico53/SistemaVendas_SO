@@ -92,8 +92,6 @@ void menuShow(){
     printf("\n");
 }
 
-
-
 void register_new_artigo(char* n, int p, int code){
     Artigo a = create_artigo(n, p, code);
     save_artigo(a);
@@ -102,33 +100,36 @@ void register_new_artigo(char* n, int p, int code){
 
 void change_nome_artigo(int code, char* n){
     Artigo a = seek_artigo(code);
-    set_nome(a, n);
-    free(a);
+    if(a){
+        set_nome(a, n);
+        free(a);
+    }
 }
 
-
-void change_preco_artigo(int code, int p){
+void change_preco_artigo(int code, float p){
     Artigo a = seek_artigo(code);
-    set_preco(a, p);
-    free(a);
+    if(a){
+        set_preco(a, p);
+        free(a);
+    }
 }
 
 int main(){
     int fdArtigos = open("database/ARTIGOS", O_RDONLY);
     int currCod = (lseek(fdArtigos, 0, SEEK_END) / 65) + 1;
-    //close(fdArtigos);
+    close(fdArtigos);
     menuShow();
     int rl;
 
 
     while(1){
         char buf[LINE_BLOCK_SIZE];
-        char *comands[3];
+        char *commands[3];
         char *token = NULL;
-        comands[0]=NULL;
-        comands[1]=NULL;
-        comands[2]=NULL;
-        if( (rl=readline(buf,LINE_BLOCK_SIZE)) > 0 ) {
+        commands[0]=NULL;
+        commands[1]=NULL;
+        commands[2]=NULL;
+        if((rl=readline(buf,LINE_BLOCK_SIZE)) > 0 ) {
             printf("Linha lida : %s  Tamanho linha : %d bytes\n", buf, (int)strlen(buf));
             //char *all = strtok(buf,"\n");
             //printf("Your string2: %s\n", all);
@@ -137,34 +138,30 @@ int main(){
             int i=0;
             token=strtok(buf," ");
             while(token != NULL && i<3){
-                comands[i]=token;
+                commands[i]=token;
                 i++;
                 token=strtok(NULL," ");
             }
-
             //imprimir 3 tokens para ver se estão corretos
-            printf("Token0: %s  Token1: %s  Token2: %s\n", comands[0], comands[1], comands[2]);
-            printf("\n");
+            printf("Token0: %s  Token1: %s  Token2: %s\n", commands[0], commands[1], commands[2]);
             int validcmd;
             //swich options menu
-            if( (validcmd=isValidComandcmd(comands[0], comands[1], comands[2])) > 0 ){
+            if((validcmd = isValidComandcmd(commands[0], commands[1], commands[2])) > 0 ){
                 printf("COMANDO VALIDO\n");
                 switch(validcmd){
-                    case 1: register_new_artigo(comands[1], atoi(comands[2]), currCod++);
+                    case 1: register_new_artigo(commands[1], strtof(commands[2], NULL), currCod++);
                             break;
-                    case 2: change_nome_artigo(atoi(comands[1]), comands[2]);
+                    case 2: change_nome_artigo(atoi(commands[1]), commands[2]);
                             break;
-                    case 3: change_preco_artigo(atoi(comands[1]), atoi(comands[2]));
+                    case 3: change_preco_artigo(atoi(commands[1]), strtof(commands[2], NULL));
                             break;
-                    case 4: printf("MENU M:%s\n", comands[0]);
-                            menuShow();
+                    case 4: menuShow();
                             break;
                     default: printf("-----------------------\n");
                 }
-
             }
             else{
-                perror("Invalid comand type/input, please insert one of the commands listed     use m for MENU");
+                perror("Invalid command type/input, please insert one of the commands listed     use m for MENU");
             }
         }
         else{

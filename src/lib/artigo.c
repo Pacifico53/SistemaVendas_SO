@@ -2,11 +2,11 @@
 
 struct str_artigo{
     int nome;
-    int preco;
+    float preco;
     int codigo;
 };
 
-Artigo create_artigo(char* n, int p, int code){
+Artigo create_artigo(char* n, float p, int code){
     Artigo a = malloc(sizeof(struct str_artigo));
 
     a->nome = save_name(n);
@@ -24,6 +24,7 @@ Artigo seek_artigo(int code){
     char buf[64] = "";
     if (read(fd, buf, 64) != 64) {
         printf("Erro a ler\n");
+        return 0;
     }
     else {
         printf("Li isto: \'%s\'\n", buf);
@@ -43,7 +44,7 @@ Artigo seek_artigo(int code){
     Artigo a = malloc(sizeof(struct str_artigo));
 
     a->nome = atoi(info[0]);
-    a->preco = atoi(info[1]);
+    a->preco = strtof(info[1], NULL);
     a->codigo = code;
     
     print_artigo(a);
@@ -57,7 +58,7 @@ void set_nome(Artigo a, char* n){
     save_artigo(a);
 }
 
-void set_preco(Artigo a, int p){
+void set_preco(Artigo a, float p){
     a->preco = p;
     save_artigo(a);
 }
@@ -84,7 +85,7 @@ char* get_nome(Artigo a){
     return strdup(n);
 }
 
-int get_preco(Artigo a){
+float get_preco(Artigo a){
     return a->preco;
 }
 
@@ -96,12 +97,11 @@ void save_artigo(Artigo a){
     int fd = open("database/ARTIGOS", O_WRONLY);
     char str[64] = "";
     int pos = (a->codigo-1) * 65;
-    snprintf(str, 64, "%d %d", a->nome, a->preco);
+    snprintf(str, 64, "%d %f", a->nome, a->preco);
 
     lseek(fd, pos, SEEK_SET);
 
     if ((write(fd, str, 64) > 1) && (write(fd, "\n", 1) > 0)) {
-
         printf("Success writing to file ARTIGOS.\n");
     }
     else {
@@ -129,7 +129,7 @@ int save_name(char* name){
 void print_artigo(Artigo a){
     printf("====\nNome = %s\n", get_nome(a));
     printf("Posicao do Nome = %d\n", get_index_nome(a));
-    printf("Preço = %d\n", get_preco(a));
+    printf("Preço = %f\n", get_preco(a));
     printf("Codigo = %d\n====\n", get_code(a));
 }
 

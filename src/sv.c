@@ -20,11 +20,11 @@ int main(int argc, char* argv[]){
 	}
 	*/
 	
-	 
+	/* 
 	int sv_pipe
 	  
 	if( (sv_pipe = open("sv_sv_fifo", O_RDONLY)) == 0)
-
+*/
 
 
 
