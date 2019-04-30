@@ -1,0 +1,4 @@
+-output dos comandos i n p
+-converter string para float -> strtod
+
+
