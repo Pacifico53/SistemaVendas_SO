@@ -1,30 +1,35 @@
 // SERVIDOR DE VENDAS
 
-#include<sys/types.h>
-#include<sys/stat.h>
-#include<unistd.h>
-#include<string.h>
-#include<stdlib.h>
-#include<stdio.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <unistd.h>
+#include <string.h>
+#include <stdlib.h>
+#include <fcntl.h>
+#include <stdio.h>
 
-int main(int argc, char* argv[]){
-	/* int fifo_sv_cv;
-	
-	if( (fifo_sv_cv = mkfifo("fifo_sv_cv", 0666)) == 0){
-		printf("sv-cv fifo created");
+#define LINE_BLOCK_SIZE 128
 
-		
-	}else{
-		perror("fifo creation error\n");
-		return 0;
-	}
-	*/
-	
-	/* 
-	int sv_pipe
-	  
-	if( (sv_pipe = open("sv_sv_fifo", O_RDONLY)) == 0)
-*/
+int main(){
+    int fd;
+
+    // FIFO file path
+    char *serverFIFO = "database/fifo";
+
+    // Creating the named file(FIFO)
+    // mkfifo(<pathname>,<permission>)
+    mkfifo(serverFIFO, 0777);
+
+    char buf[LINE_BLOCK_SIZE];
+    while (1){
+        // First open in read only and read
+        fd = open(serverFIFO, O_RDONLY);
+        read(fd, buf, LINE_BLOCK_SIZE);
+
+        // Print the read string and close
+        printf("String: %s\n", buf);
+        close(fd);
+    }
 
 
 

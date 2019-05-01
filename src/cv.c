@@ -1,66 +1,60 @@
 // CLIENTE DE VENDAS
 
-#include<unistd.h>
-#include<stdio.h>
-#include<string.h>
-#include<fcntl.h>
-#include<stdlib.h>
+#include <unistd.h>
+#include <stdio.h>
+#include <string.h>
+#include <fcntl.h>
+#include <stdlib.h>
+#include <sys/types.h>
+#include <sys/stat.h>
 
 #define LINE_BLOCK_SIZE 128
 
-int readline(char* buffer, int size){	//se retornar-mos o i temos os numeros de byts lidos/até ao '\n'
-	char c;
-	int i=0;
+int readline(char* buffer, int size){   //se retornar-mos o i temos os numeros de byts lidos/até ao '\n'
+    char c;
+    int i=0;
 
-	if(buffer == NULL || size == 0)
-		return 0;
+    if(buffer == NULL || size == 0)
+        return 0;
 
-	while( read(0,&c,1) == 1 && i<size-1 ){
-		if( c == '\n'){
-			buffer[i]=0;
-			return i;
-		}
-		buffer[i++]=c;
-	}
-	buffer[i]=0;
-	return i;
+    while( read(0,&c,1) == 1 && i<size-1 ){
+        if( c == '\n'){
+            buffer[i]=0;
+            return i;
+        }
+        buffer[i++]=c;
+    }
+    buffer[i]=0;
+    return i;
 }
 
 int isValidComand(){
 
-
+    return 0;
 }
 
-int main(int argc, char* argv[]){
-	char buffer[LINE_BLOCK_SIZE];
-	int rl;
-	int cv_sv_fifo;
-	char buf[LINE_BLOCK_SIZE];
-	int sv_pipe;
+int main(){
+    char * serverFIFO = "database/fifo";
 
-	//create fifo
-	if( (cv_sv_fifo == mkfifo("sv_sv_fifo",0666)) > 0){
-		//open fifo
-		if( (sv_pipe = open("sv_sv_fifo", O_WRONLY)) == 0){
-			printf("pipe opened\n");
-		}else{
-			perror("opening pipe");
-			return 1;
-		}
+    // Creating the named file(FIFO)
+    // mkfifo(<pathname>, <permission>)
+    mkfifo(serverFIFO, 0777);
+    int fd;
 
-		while(1){
-			if( (rl=readline(buffer,LINE_BLOCK_SIZE)) ){
-				write(sv_pipe,buffer,rl);
+    char buf[LINE_BLOCK_SIZE];
+    while (1){
+        // Open FIFO for write only
+        fd = open(serverFIFO, O_WRONLY);
 
-			}else{
-				perror("deu merda a ler");
-				return 1;
-			}		
-		}	
-	}else{
-		perror("fifo creation error");
-		return 0;
-	}
-	return 0;
+        // Take an input arr2ing from user.
+        readline(buf, LINE_BLOCK_SIZE);
+
+        // Write the input on FIFO and close it
+        write(fd, buf, LINE_BLOCK_SIZE);
+        close(fd);
+    }
+
+    printf("Done.\n");
+    return 0;
 }
 
