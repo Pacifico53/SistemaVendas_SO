@@ -40,15 +40,13 @@ int main(){
     // mkfifo(<pathname>, <permission>)
     mkfifo(serverFIFO, 0777);
     int fd;
-
     char buf[LINE_BLOCK_SIZE];
+
     while (1){
         // Open FIFO for write only
         fd = open(serverFIFO, O_WRONLY);
-
         // Take an input arr2ing from user.
         readline(buf, LINE_BLOCK_SIZE);
-
         // Write the input on FIFO and close it
         write(fd, buf, LINE_BLOCK_SIZE);
         close(fd);

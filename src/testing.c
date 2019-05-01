@@ -1,7 +1,10 @@
 #include <stdio.h>
 #include "../include/artigo.h"
+#include <stdlib.h>
+#include <ctype.h>
 
 int main(){
+    /*
     int i = 1;
     Artigo a = create_artigo("Televisao Grande", 1259, i++);
     Artigo b = create_artigo("Playstation", 399, i++);
@@ -13,7 +16,11 @@ int main(){
     save_artigo(b);
     save_artigo(c);
     seek_artigo(2);
-    printf("teste %f\n", strtof("13.12", NULL));
+    */
+    printf("teste %f\n", strtof("1s2cd3cenas", NULL));
+    if (isdigit('1')!=0) {
+       printf("ye\n");
+    }
     return 0;
 }
 

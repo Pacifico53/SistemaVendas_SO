@@ -7,6 +7,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <ctype.h>
 #include "../include/artigo.h"
 
 #define LINE_BLOCK_SIZE 128
@@ -28,49 +29,57 @@ int readline(char *buffer, int size){   //retorna os bytes lidos
     return i;
 }
 
+int isNumber(char* str){
+   int i = 0, flag = 0;
+   for (i = 0; str[i] && flag == 0; i++) {
+       if (isdigit(str[i]) == 0 && str[i] != '.') {
+            flag = 1;
+       }
+   }
+
+   return flag;
+}
+
 int isValidComandcmd(char* cmd0, char* cmd1, char* cmd2){
     //check if i string int é valido    atoi string retorna 0     atoi inteiro  retorna >0
     if( strcmp(cmd0,"i") == 0){
         if(cmd0 == NULL || cmd1 == NULL || cmd2 == NULL){
           return 0;
         }
-        int cmd1i = atoi(cmd1);
-        int cmd2i = atoi(cmd2);
-        if( cmd1i == 0 && cmd2i > 0){
+        if (isNumber(cmd1) == 1 && isNumber(cmd2) == 0 && strtof(cmd2, NULL) >= 0) {
             return 1;
         }
-        else{
+        else {
             return 0;
         }
     }
+
     //check if n int string é valido
     if( strcmp(cmd0,"n") == 0){
         if(cmd0 == NULL || cmd1 == NULL || cmd2 == NULL){
             return 0;
-          }
-        int cmd1n = atoi(cmd1);
-        int cmd2n = atoi(cmd2);
-        if( cmd1n > 0 && cmd2n == 0){
+        }
+        if (isNumber(cmd1) == 0 && isNumber(cmd2) == 1 && atoi(cmd1) > 0) {
             return 2;
         }
-        else{
+        else {
             return 0;
         }
     }
+
     // check if p int int é valido
     if( strcmp(cmd0,"p") == 0){
         if(cmd0 == NULL || cmd1 == NULL || cmd2 == NULL){
             return 0;
           }
-        int cmd1p = atoi(cmd1);
-        int cmd2p = atoi(cmd2);
-        if( cmd1p > 0 && cmd2p > 0){
+        if (isNumber(cmd1) == 0 && isNumber(cmd2) == 0 && atoi(cmd1) > 0 && strtof(cmd2, NULL) >= 0) {
             return 3;
         }
-        else{
+        else {
             return 0;
         }
     }
+
     // check if c int é válido
     if( strcmp(cmd0,"c") == 0){
         if(cmd0 == NULL || cmd1 == NULL){
@@ -84,6 +93,7 @@ int isValidComandcmd(char* cmd0, char* cmd1, char* cmd2){
             return 0;
         }
     }
+
     //check if l é válido
     if(strcmp(cmd0,"l") == 0){
         if(cmd0 == NULL){
@@ -118,7 +128,7 @@ void menuShow(){
 void register_new_artigo(char* n, int p, int code){
     Artigo a = create_artigo(n, p, code);
     save_artigo(a);
-    printf("codigo = %d\n",code);
+    printf("Codigo = %d\n",code);
     free(a);
 }
 
@@ -140,8 +150,10 @@ void change_preco_artigo(int code, float p){
 
 void show_artigo(int code){
     Artigo a = seek_artigo(code);
-    //print_artigo(a); ----> seek_artigo já dá print(para testar)
-    free(a);
+    if(a){
+        print_artigo(a);
+        free(a);
+    }
 }
 
 void list_artigos(int currCod){
@@ -166,9 +178,6 @@ int main(){
         commands[1]=NULL;
         commands[2]=NULL;
         if((rl=readline(buf,LINE_BLOCK_SIZE)) > 0 ) {
-            //char *all = strtok(buf,"\n");
-            //printf("Your string2: %s\n", all);
-            //printf("%d\n",strlen(all));
             //partir linha em token(3 tokens) pode-se fazer numa função auxiliar
             int i=0;
             token=strtok(buf," ");
@@ -199,13 +208,14 @@ int main(){
                 }
             }
             else{
-                perror("Invalid command type/input, please insert one of the commands listed     use m for MENU");
+                perror("Invalid command type/input, please insert one of the commands listed.");
             }
         }
         else{
-            perror("No line readed");
+            perror("No line read.");
         }
     }
+
     return 0;
 }
 

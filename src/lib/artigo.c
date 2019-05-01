@@ -47,8 +47,6 @@ Artigo seek_artigo(int code){
     a->preco = strtof(info[1], NULL);
     a->codigo = code;
 
-    //Check do artigo
-    print_artigo(a);
     return a;
 }
 
