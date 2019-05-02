@@ -8,6 +8,7 @@
 #include <fcntl.h>
 #include <stdio.h>
 #include <ctype.h>
+#include "../include/artigo.h"
 
 #define LINE_BLOCK_SIZE 128
 
@@ -31,10 +32,19 @@ int isNumber(char* str){
 
 void show_stock_price(int code){
     printf("Code = %d\n", code);
+    Artigo a = seek_artigo(code);
+    if(a){
+        printf("Stock = %d\nPreço = %f\n", get_stock(a), get_preco(a));
+    }
 }
 
 void update_stock(int code, int stock){
     printf("Code = %d\nStock = %d\n", code, stock);
+    Artigo a = seek_artigo(code);
+    if (a) {
+        change_stock(a, get_stock(a)-stock);
+        free(a);
+    }
 }
 
 int check_command(char* commands){

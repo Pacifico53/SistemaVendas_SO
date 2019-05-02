@@ -19,5 +19,7 @@ int get_code(Artigo a);
 void print_artigo(Artigo a);
 void save_artigo(Artigo a);
 int save_name(char* name);
+int get_stock(Artigo a);
+void change_stock(Artigo a, int stock);
 #endif
 

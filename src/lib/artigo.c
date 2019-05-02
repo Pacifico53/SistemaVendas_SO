@@ -71,7 +71,9 @@ char* get_nome(Artigo a){
     lseek(fd, a->nome, SEEK_SET);
     char n[64];
 
-    read(fd, n, 64);
+    if(read(fd, n, 64) != 64){
+        perror("Name not found.");
+    }
     int i = 0, flag = 1;
     for (i = 0; i < 64 && flag; i++) {
         if (n[i] == '\n') {
@@ -92,6 +94,45 @@ int get_code(Artigo a){
     return a->codigo;
 }
 
+int get_stock(Artigo a){
+    int fd = open("database/STOCKS", O_RDONLY);
+    int pos = (a->codigo-1) * 65;
+    lseek(fd, pos, SEEK_SET);
+    char buf[64];
+
+    if(read(fd, buf, 64) < 0){
+        perror("Name not found.");
+    }
+    int i = 0, flag = 1;
+    for (i = 0; i < 64 && flag; i++) {
+        if (buf[i] == '\n') {
+            buf[i] = '\0';
+            flag = 0;
+        }
+    }
+    close(fd);
+
+    return atoi(buf);
+}
+
+void change_stock(Artigo a, int stock){
+    int fd = open("database/STOCKS", O_WRONLY);
+    char str[64] = "";
+    int pos = (a->codigo-1) * 65;
+    snprintf(str, 64, "%d", stock);
+
+    lseek(fd, pos, SEEK_SET);
+
+    if ((write(fd, str, 64) > 1) && (write(fd, "\n", 1) > 0)) {
+        printf("Success writing to file STOCKS.\n");
+    }
+    else {
+        printf("Error writing to file STOCKS.\n");
+    }
+
+    close(fd);
+}
+
 void save_artigo(Artigo a){
     int fd = open("database/ARTIGOS", O_WRONLY);
     char str[64] = "";
@@ -108,6 +149,8 @@ void save_artigo(Artigo a){
     }
 
     close(fd);
+
+    change_stock(a, 0);
 }
 
 int save_name(char* name){
@@ -131,4 +174,6 @@ void print_artigo(Artigo a){
     printf("Preço = %f\n", get_preco(a));
     printf("Codigo = %d\n===========\n", get_code(a));
 }
+
+
 
