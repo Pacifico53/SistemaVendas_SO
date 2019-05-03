@@ -30,36 +30,30 @@ void update_stock(int code, int stock){
         free(a);
     }
 }
-int check_command(char* commands){
+int execute_command(char* commands){
     char *token = strtok(commands, " ");
     char *cmds[2];
     cmds[0] = NULL;
     cmds[1] = NULL;
     int i = 0;
 
+    //extract tokens
     while (token && i<3) {
         cmds[i++] = strdup(token);
         token = strtok(NULL, " ");
     }
 
     if (cmds[1] == NULL) {
-        if (isNumber(cmds[0]) && atoi(cmds[0]) > 0) {
-            show_stock_price(atoi(cmds[0]));
-            return 1;
-        }
-        else {
-            return 0;
-        }
+      show_stock_price(atoi(cmds[0]));
+      return 1;
     }
-    else {
-        if (isNumber(cmds[0]) && atoi(cmds[0]) > 0 && isNumber(cmds[1])) {
-            update_stock(atoi(cmds[0]), atoi(cmds[1]));
-            return 2;
-        }
-        else {
-            return 0;
-        }
+
+    if (cmds[0] != NULL && cmds[1] != NULL) {
+      update_stock(atoi(cmds[0]), atoi(cmds[1]));
+      return 2;
     }
+
+    printf("sv Execute command ERROR");
     return 0;
 }
 
@@ -83,6 +77,7 @@ int isNumber(char* str){
 
 int main(){
     int fd;
+    int rl;
     char buf[LINE_BLOCK_SIZE];
     // FIFO file path
     char *serverFIFO = "database/serverFIFO";
@@ -101,12 +96,17 @@ int main(){
 
     while(1){
 	     // printf("Entrou cliente\n");
-        read(fd, buf, LINE_BLOCK_SIZE);
-        printf("String: %s\n", buf);
+        if( (rl=read(fd, buf, LINE_BLOCK_SIZE)) > 0){
+          printf("String: %s\n", buf);
 
-        //executar comands
+          //executar comands
 
-        printf("executar commandos\n");
+          printf("sv Executar commandos\n");
+        //  if()
+
+      }else{
+        perror("sv Reading from serverFIFO");
+      }
     }
 	close(fd);
 	return 0;

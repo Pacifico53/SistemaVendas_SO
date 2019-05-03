@@ -29,23 +29,27 @@ int readline(char* buffer, int size){   //se retornar-mos o i temos os numeros d
 }
 
 int isValidComand(){
-
     return 0;
 }
 
 
 int check_command(char* commands){
     char *token = strtok(commands, " ");
-    char *cmds[2];
+    char *cmds[3];
     cmds[0] = NULL;
     cmds[1] = NULL;
+    cmds[2] = NULL;
     int i = 0;
 
-    while (token && i<3) {
+    while (token && i<4) {
         cmds[i++] = strdup(token);
         token = strtok(NULL, " ");
     }
 
+    // Numero de argumentos >2 ou cmds[2]!=NULL  -> comando inválido
+    if(cmds[2] != NULL){
+      return 0;
+    }
 
 
     if (cmds[1] == NULL) {
@@ -100,18 +104,21 @@ int main(){
 	     perror("cv Opening serverFIFO");
     }
 
-
-     while(1){
+    int pid=getpid();
+    while(1){
     	  printf("pid :%i\n",getpid());
+
 	// Take an input arr2ing from user.
         int bytesreaded = readline(buf, LINE_BLOCK_SIZE);
 
         // Write the input on FIFO and close it
         if(check_command(buf) == 0){
-          printf("Invalid command\n");
+          printf("cv Invalid command\n");
         }else{
-
-        write(fd, buf, bytesreaded);
+        //escrever o pid também(para o sv saber quem mandou poder responder)
+        char* request;
+        //request pid(converter para string) ++ ' ' ++ buf
+        write(fd, buf /*request*/, bytesreaded);
         }
 
     }
