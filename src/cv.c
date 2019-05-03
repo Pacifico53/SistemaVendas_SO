@@ -34,25 +34,31 @@ int isValidComand(){
 }
 
 int main(){
-    char * serverFIFO = "database/fifo";
+    char * serverFIFO = "database/serverFIFO";
 
     // Creating the named file(FIFO)
     // mkfifo(<pathname>, <permission>)
-    mkfifo(serverFIFO, 0777);
+    //   mkfifo(serverFIFO, 0777);	quem cria o fifo é o cv
     int fd;
     char buf[LINE_BLOCK_SIZE];
 
-    while (1){
         // Open FIFO for write only
-        fd = open(serverFIFO, O_WRONLY);
-        // Take an input arr2ing from user.
+    if( (fd = open(serverFIFO, O_WRONLY)) == -1 ){
+	perror("cv Opening serverFIFO");
+    }
+    
+     while(1){
+    
+	// Take an input arr2ing from user.
         readline(buf, LINE_BLOCK_SIZE);
         // Write the input on FIFO and close it
         write(fd, buf, LINE_BLOCK_SIZE);
-        close(fd);
     }
-
+   
+    close(fd);
     printf("Done.\n");
     return 0;
 }
+
+//Cliente de Vendas
 

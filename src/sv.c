@@ -82,27 +82,39 @@ int check_command(char* commands){
 
 int main(){
     int fd;
-
+    char buf[LINE_BLOCK_SIZE];
     // FIFO file path
-    char *serverFIFO = "database/fifo";
+    char *serverFIFO = "database/serverFIFO";
+
 
     // Creating the named file(FIFO)
     // mkfifo(<pathname>,<permission>)
-    mkfifo(serverFIFO, 0777);
+    if ( mkfifo(serverFIFO, 0777) == -1 ){
+	perror("sv Creating server FIFO");
+    }
+    // First open in read only and read
+    if( (fd = open(serverFIFO, O_RDONLY)) == -1 ){
+	perror("sv Opening serverFIFO");
+    }
+    
 
-    char buf[LINE_BLOCK_SIZE];
-    while (1){
-        // First open in read only and read
-        fd = open(serverFIFO, O_RDONLY);
-        printf("Entrou cliente\n");
+    while(1){
+	// printf("Entrou cliente\n");
         read(fd, buf, LINE_BLOCK_SIZE);
         printf("String: %s\n", buf);
-        if(check_command(buf) == 0){
-            perror("Invalid input.");
-        }
+       
+       	if(check_command(buf) == 0){
+            printf("invalid command");
+        }else{
 
-        close(fd);
+
+
+	}
+    
+    
+    
+    
     }
-
+	close(fd);
 	return 0;
 }
