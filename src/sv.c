@@ -13,22 +13,6 @@
 #define LINE_BLOCK_SIZE 128
 
 
-int isNumber(char* str){
-   int i = 0, flag = 1;
-   for (i = 0; str[i] && flag; i++) {
-        if (i == 0){
-           if(isdigit(str[i]) == 0 && str[i] != '-') {
-                flag = 0;
-            }
-        }
-        else {
-            if (isdigit(str[i]) == 0) {
-                flag = 0;
-            }
-        }
-   }
-   return flag;
-}
 
 void show_stock_price(int code){
     printf("Code = %d\n", code);
@@ -46,7 +30,6 @@ void update_stock(int code, int stock){
         free(a);
     }
 }
-
 int check_command(char* commands){
     char *token = strtok(commands, " ");
     char *cmds[2];
@@ -80,6 +63,24 @@ int check_command(char* commands){
     return 0;
 }
 
+int isNumber(char* str){
+   int i = 0, flag = 1;
+   for (i = 0; str[i] && flag; i++) {
+        if (i == 0){
+           if(isdigit(str[i]) == 0 && str[i] != '-') {
+                flag = 0;
+            }
+        }
+        else {
+            if (isdigit(str[i]) == 0) {
+                flag = 0;
+            }
+        }
+   }
+   return flag;
+}
+
+
 int main(){
     int fd;
     char buf[LINE_BLOCK_SIZE];
@@ -93,27 +94,18 @@ int main(){
 	perror("sv Creating server FIFO");
     }
     // First open in read only and read
-    if( (fd = open(serverFIFO, O_RDONLY)) == -1 ){
+    if( (fd = open(serverFIFO, O_RDWR)) == -1 ){
 	perror("sv Opening serverFIFO");
     }
-    
+
 
     while(1){
 	// printf("Entrou cliente\n");
         read(fd, buf, LINE_BLOCK_SIZE);
         printf("String: %s\n", buf);
-       
-       	if(check_command(buf) == 0){
-            printf("invalid command");
-        }else{
 
-
-
-	}
-    
-    
-    
-    
+        //executar comands
+        printf("executar commandos\n");
     }
 	close(fd);
 	return 0;
