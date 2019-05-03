@@ -110,8 +110,10 @@ int main(){
         if(check_command(buf) == 0){
           printf("Invalid command\n");
         }else{
+
         write(fd, buf, bytesreaded);
         }
+
     }
 
     close(fd);

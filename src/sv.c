@@ -100,11 +100,12 @@ int main(){
 
 
     while(1){
-	// printf("Entrou cliente\n");
+	     // printf("Entrou cliente\n");
         read(fd, buf, LINE_BLOCK_SIZE);
         printf("String: %s\n", buf);
 
         //executar comands
+
         printf("executar commandos\n");
     }
 	close(fd);
