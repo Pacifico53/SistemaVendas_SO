@@ -7,6 +7,7 @@
 #include <stdlib.h>
 #include <sys/types.h>
 #include <sys/stat.h>
+#include <signal.h>
 
 #define LINE_BLOCK_SIZE 128
 
@@ -19,7 +20,9 @@ int readline(char* buffer, int size){   //se retornar-mos o i temos os numeros d
 
     while( read(0,&c,1) == 1 && i<size-1 ){
         if( c == '\n'){
-            buffer[i]=0;
+            char pidFIFO[32] = "";
+            snprintf(pidFIFO, 32, " database/fifo%d", getpid());
+            strcat(buffer, pidFIFO);
             return i;
         }
         buffer[i++]=c;
@@ -28,104 +31,45 @@ int readline(char* buffer, int size){   //se retornar-mos o i temos os numeros d
     return i;
 }
 
-int isValidComand(){
-    return 0;
-}
-
-
-int check_command(char* commands){
-    char *token = strtok(commands, " ");
-    char *cmds[3];
-    cmds[0] = NULL;
-    cmds[1] = NULL;
-    cmds[2] = NULL;
-    int i = 0;
-
-    while (token && i<4) {
-        cmds[i++] = strdup(token);
-        token = strtok(NULL, " ");
-    }
-
-    // Numero de argumentos >2 ou cmds[2]!=NULL  -> comando inválido
-    if(cmds[2] != NULL){
-      return 0;
-    }
-
-
-    if (cmds[1] == NULL) {
-        if (isNumber(cmds[0]) && atoi(cmds[0]) > 0) {
-          //  show_stock_price(atoi(cmds[0]));
-            return 1;
-        }
-        else {
-            return 0;
-        }
-    }
-    else {
-        if (isNumber(cmds[0]) && atoi(cmds[0]) > 0 && isNumber(cmds[1])) {
-          //  update_stock(atoi(cmds[0]), atoi(cmds[1]));
-            return 2;
-        }
-        else {
-            return 0;
-        }
-    }
-    return 0;
-}
-
-int isNumber(char* str){
-   int i = 0, flag = 1;
-   for (i = 0; str[i] && flag; i++) {
-        if (i == 0){
-           if(isdigit(str[i]) == 0 && str[i] != '-') {
-                flag = 0;
-            }
-        }
-        else {
-            if (isdigit(str[i]) == 0) {
-                flag = 0;
-            }
-        }
-   }
-   return flag;
+void sigcont_handler(int sig){
+    printf("Acordei %d\n", sig);
 }
 
 int main(){
-    char * serverFIFO = "database/serverFIFO";
+    // FIFO file path
+    char *serverFIFO = "database/serverFIFO";
+    int fdSERVER, fdPIDFIFO;
+    char pidFIFO[64] = "";
+    snprintf(pidFIFO, 64, "database/fifo%d", getpid());
 
-    // Creating the named file(FIFO)
-    // mkfifo(<pathname>, <permission>)
-    //   mkfifo(serverFIFO, 0777);	quem cria o fifo é o cv
-    int fd;
-    char buf[LINE_BLOCK_SIZE];
+    signal(SIGCONT, sigcont_handler);
+    
+    mkfifo(pidFIFO, 0777);
+    mkfifo(serverFIFO, 0777);
 
-        // Open FIFO for write only
-    if( (fd = open(serverFIFO, O_WRONLY)) == -1 ){
-	     perror("cv Opening serverFIFO");
-    }
+    while (1){
+        char buf[LINE_BLOCK_SIZE];
+        char res[LINE_BLOCK_SIZE];
+        fdSERVER = open(serverFIFO, O_WRONLY);
 
-    int pid=getpid();
-    while(1){
-    	  printf("pid :%i\n",getpid());
-
-	// Take an input arr2ing from user.
-        int bytesreaded = readline(buf, LINE_BLOCK_SIZE);
+        // Take an input from user.
+        readline(buf, LINE_BLOCK_SIZE);
 
         // Write the input on FIFO and close it
-        if(check_command(buf) == 0){
-          printf("cv Invalid command\n");
-        }else{
-        //escrever o pid também(para o sv saber quem mandou poder responder)
-        char* request;
-        //request pid(converter para string) ++ ' ' ++ buf
-        write(fd, buf /*request*/, bytesreaded);
-        }
+        write(fdSERVER, buf, LINE_BLOCK_SIZE);
+        close(fdSERVER);
+        fdPIDFIFO = open(pidFIFO, O_RDONLY);
+        pause();
 
+
+        read(fdPIDFIFO, res, LINE_BLOCK_SIZE);
+        printf("%s", res);
+        close(fdPIDFIFO);
+        snprintf(buf, LINE_BLOCK_SIZE, " ");
+        snprintf(res, LINE_BLOCK_SIZE, " ");
     }
 
-    close(fd);
     printf("Done.\n");
     return 0;
 }
 
-//Cliente de Vendas
