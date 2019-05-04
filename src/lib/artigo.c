@@ -175,5 +175,3 @@ void print_artigo(Artigo a){
     printf("Codigo = %d\n===========\n", get_code(a));
 }
 
-
-
