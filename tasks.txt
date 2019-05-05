@@ -1,3 +1,4 @@
 -output dos comandos i n p
 -fazer com que o ma leia o float direito ( como esta nao le depois do ponto, ex: 123.23 -> 123.00)
 
+-só para ter um commit hoje e uma cena verde xD
