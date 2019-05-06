@@ -12,8 +12,8 @@
 #define LINE_BLOCK_SIZE 128
 
 int readline(char* buffer, int size){   //se retornar-mos o i temos os numeros de byts lidos/até ao '\n'
+    int i = 0;
     char c;
-    int i=0;
 
     if(buffer == NULL || size == 0)
         return 0;
@@ -85,12 +85,11 @@ char* check_command(char* commands){
       cmds[i]=token;
       i++;
       token=strtok(NULL," ");
-  }
+    }
 
     if(cmds[2] != NULL){ //comando inválido, argumentos a mais
       return NULL;
     }
-
     //comando tipo 1
     if (cmds[1] == NULL) {
         if (isNumber(cmds[0]) && atoi(cmds[0]) > 0) {
@@ -101,7 +100,6 @@ char* check_command(char* commands){
           return NULL;
         }
     }
-
     //comando tipo 2
     if (cmds[0] != NULL && cmds[1] != NULL) {
         if(isNumber(cmds[0]) && atoi(cmds[0]) > 0 && isNumber(cmds[1])){
@@ -123,47 +121,47 @@ void sigcont_handler(int sig){
 
 
 int main(){
-    // FIFO file path
     char *serverFIFO = "database/serverFIFO";
     char *clienteFIFO = "database/clienteFIFO";
     char  replie[128];
-    int fdSERVER, fdCLIENTE;
+    int fd_serverFIFO, fd_clienteFIFO;
   //  char pidFIFO[64] = "";
   //  snprintf(pidFIFO, 64, "database/fifo%d", getpid());
 
     //signal(SIGCONT, sigcont_handler);
 
-    mkfifo(clienteFIFO, 0777);
-//    mkfifo(serverFIFO, 0777);
+    if( (mkfifo(clienteFIFO, 0777)) == -1){
+      perror("cv Creating clienteFIFO");
+    }
+
     while (1){
-        fdSERVER = open(serverFIFO, O_WRONLY);
         char *request;
         char buf[LINE_BLOCK_SIZE];
         // char res[LINE_BLOCK_SIZE];
-        // passou para fora dor whie cima fdSERVER = open(serverFIFO, O_WRONLY);
+        if( (fd_serverFIFO = open(serverFIFO, O_WRONLY)) == -1){
+          perror("cv Opening fd serverFIFO");
+        }
 
         // Take an input from user.
         int bytesreaded = readline(buf, LINE_BLOCK_SIZE);
 
-        if( (request = check_command(buf)) !=NULL ){
+        if( (request = check_command(buf)) != NULL ){
           printf("valid command\n");
-          //constroi msg, pid+comandos
 
-          //char *request = build_request(buf,cmdtype);
           printf("Request command: %s  size: %ld  lenght : %ld\n",request, sizeof(request),strlen(request));
           //Write the input on FIFO and close it
-          write(fdSERVER, request, strlen(request));
+          write(fd_serverFIFO, request, strlen(request));
           free(request);
-          close(fdSERVER);
-          fdCLIENTE = open(clienteFIFO, O_RDONLY);
+          close(fd_serverFIFO);
+          fd_clienteFIFO = open(clienteFIFO, O_RDONLY);
 
           // dup2(fdCLIENTE,1); ?? acho que não funciona com fifos
 
 
-          read(fdCLIENTE, replie, LINE_BLOCK_SIZE);
+          read(fd_clienteFIFO, replie, LINE_BLOCK_SIZE);
           printf("replie : %s\n",replie);
           write(1,"yoo\n",4);
-          close(fdCLIENTE);
+          close(fd_clienteFIFO);
           /*close(fdSERVER);
           fdPIDFIFO = open(pidFIFO, O_RDONLY);
           pause();
