@@ -68,16 +68,18 @@ char* exec_request(char* commands){
 
     //verificações checadas no cv
     if (cmds[2] == NULL) {
-      return show_stock_price(atoi(cmds[0]));
+        return show_stock_price(atoi(cmds[0]));
 
-    }else if (cmds[0] != NULL && cmds[1] != NULL) {
-      return update_stock(atoi(cmds[0]), atoi(cmds[1]));
+    }
+    else if (cmds[0] != NULL && cmds[1] != NULL) {
+        return update_stock(atoi(cmds[0]), atoi(cmds[1]));
 
     }else {
-      printf("Fudeuu\n");
-      return NULL;
+        printf("Fudeuu\n");
+        return NULL;
     }
 }
+
 char* getFIFO(char* buffer){
     char *token = strtok(buffer, " ");
     char *cmds[2];
@@ -91,13 +93,14 @@ char* getFIFO(char* buffer){
         token = strtok(NULL, " ");
     }
     if (cmds[2] == NULL) {
+        printf("pid=%s\n", cmds[1]);
         return strdup(cmds[1]);
     }
     else{
+        printf("pid=%s\n", cmds[2]);
         return strdup(cmds[2]);
     }
 }
-
 
 pid_t get_pid_fifo(char* file){
     int i, j = 0, len = strlen(file);
@@ -111,54 +114,35 @@ pid_t get_pid_fifo(char* file){
 int main(){
     // FIFO file path
     char *serverFIFO = "database/serverFIFO";
-    char *clienteFIFO = "database/clienteFIFO";
+    char clienteFIFO[128] = "";
     // Creating the named file(FIFO)
     int fd_serverFIFO, fd_clienteFIFO;
     char buf[LINE_BLOCK_SIZE];
 
     if( (mkfifo(serverFIFO, 0777)) == -1){
-      perror("sv Creating serverFIFO");
+        perror("sv Creating serverFIFO");
     }
 
     while (1){
-        char *replie;
-
+        char *reply;
         if ( (fd_serverFIFO = open(serverFIFO, O_RDONLY)) == -1){
           perror("sv Opening fd serverFIFO");
         }
 
         if( read(fd_serverFIFO, buf, LINE_BLOCK_SIZE) > 0 ){
             printf("String:%s\n", buf);
-            replie = exec_request(strdup(buf));
-            if(replie == NULL){
+            reply = exec_request(strdup(buf));
+            if(reply == NULL){
               printf("fudeuuu\n");
             }
-            //close(fdSERVER);
-          //  char* pidFIFO = getFIFO(strdup(buf));
-//printf("pidFIFO : %s\n",pidFIFO);
+            printf("cenas\n");
+            snprintf(clienteFIFO, 128, "database/clienteFIFO%s", getFIFO(strdup(buf)));
             fd_clienteFIFO = open(clienteFIFO, O_WRONLY);
-            write(fd_clienteFIFO, replie, strlen(replie));
-            free(replie);
+            write(fd_clienteFIFO, reply, strlen(reply));
+            free(reply);
             close(fd_clienteFIFO);
-          }
-          /*  if(!strcmp(res, "")){
-                perror("Invalid input.");
-            }
-            else {
-                char* pidFIFO = getFIFO(strdup(buf));
-                printf("pidFIFO = !%s!\n", pidFIFO);
-                fdPIDFIFO = open(pidFIFO, O_WRONLY);
-                write(fdPIDFIFO, res, strlen(res));
-                printf("Respondi para %s.\n", pidFIFO);
-                kill(get_pid_fifo(pidFIFO), SIGCONT);
-                free(pidFIFO);
-                close(fdPIDFIFO);
-            }
         }
-        snprintf(res, LINE_BLOCK_SIZE, " ");*/
-        memset(buf,0,LINE_BLOCK_SIZE);//snprintf(buf, LINE_BLOCK_SIZE, "");
-
-        //close(fd);
+        memset(buf,0,LINE_BLOCK_SIZE);
     }
 
 	return 0;
