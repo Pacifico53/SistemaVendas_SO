@@ -16,7 +16,7 @@ testing:
 	$(CC) $(CFLAGS) -o testing src/testing.c src/lib/artigo.c
 
 clean:
-	rm -f ma testing cv sv database/serverFIFO database/fifo*
+	rm -f ma testing cv sv database/serverFIFO database/fifo* database/clienteFIFO
 
 resetDB:
 	rm -f database/*

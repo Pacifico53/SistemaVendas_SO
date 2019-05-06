@@ -54,7 +54,7 @@ char* build_request_msg(char* cmds0, char* cmds1, int type){
 
   if(type == 1){
     char* request = malloc(sizeof(LINE_BLOCK_SIZE));
-    snprintf(request, sizeof(request)+20, "%d %s", getpid(), cmds0);
+    snprintf(request, sizeof(request)+20, "%s %d", cmds0, getpid());
     //strcat(request,pid_string);
     //strcat(request, " ");
     //strcat(request, cmds[0]);
@@ -63,7 +63,7 @@ char* build_request_msg(char* cmds0, char* cmds1, int type){
 
   if(type == 2){
     char* request = malloc(sizeof(LINE_BLOCK_SIZE));
-    snprintf(request, sizeof(request)+20, "%d %s %s", getpid(), cmds0, cmds1);
+    snprintf(request, sizeof(request)+20, "%s %s %d", cmds0, cmds1, getpid());
     return request;
   }
 
@@ -125,15 +125,16 @@ void sigcont_handler(int sig){
 int main(){
     // FIFO file path
     char *serverFIFO = "database/serverFIFO";
-    int fdSERVER, fdPIDFIFO;
-    char pidFIFO[ 64] = "";
-    snprintf(pidFIFO, 64, "database/fifo%d", getpid());
+    char *clienteFIFO = "database/clienteFIFO";
+    char  replie[128];
+    int fdSERVER, fdCLIENTE;
+  //  char pidFIFO[64] = "";
+  //  snprintf(pidFIFO, 64, "database/fifo%d", getpid());
 
-    signal(SIGCONT, sigcont_handler);
+    //signal(SIGCONT, sigcont_handler);
 
-    mkfifo(pidFIFO, 0777);
-    mkfifo(serverFIFO, 0777);
-    fdSERVER = open(serverFIFO, O_WRONLY);
+    mkfifo(clienteFIFO, 0777);
+//    mkfifo(serverFIFO, 0777);
     while (1){
         fdSERVER = open(serverFIFO, O_WRONLY);
         char *request;
@@ -153,6 +154,16 @@ int main(){
           //Write the input on FIFO and close it
           write(fdSERVER, request, strlen(request));
           free(request);
+          close(fdSERVER);
+          fdCLIENTE = open(clienteFIFO, O_RDONLY);
+
+          // dup2(fdCLIENTE,1); ?? acho que não funciona com fifos
+
+
+          read(fdCLIENTE, replie, LINE_BLOCK_SIZE);
+          printf("replie : %s\n",replie);
+          write(1,"yoo\n",4);
+          close(fdCLIENTE);
           /*close(fdSERVER);
           fdPIDFIFO = open(pidFIFO, O_RDONLY);
           pause();

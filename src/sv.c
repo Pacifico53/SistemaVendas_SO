@@ -64,7 +64,7 @@ char* check_command(char* commands){
         cmds[i++] = strdup(token);
         token = strtok(NULL, " ");
     }
-    printf("%s(pid) %s %s\n",cmds[0],cmds[1],cmds[2]);
+    printf("%s %s %s\n",cmds[0],cmds[1],cmds[2]);
 
     if (cmds[2] == NULL) {
         if (isNumber(cmds[0]) && atoi(cmds[0]) > 0) {
@@ -118,31 +118,36 @@ pid_t get_pid_fifo(char* file){
 int main(){
     // FIFO file path
     char *serverFIFO = "database/serverFIFO";
-
+    char *clienteFIFO = "database/clienteFIFO";
     // Creating the named file(FIFO)
     mkfifo(serverFIFO, 0777);
-    int fd, fdPIDFIFO;
+    int fdSERVER, fdCLIENTE;
     char res[LINE_BLOCK_SIZE];
     char buf[LINE_BLOCK_SIZE];
 
     while (1){
-        char *res;
+        char *replie;
         // First open in read only and read
-        fd = open(serverFIFO, O_RDONLY);
-        if(read(fd, buf, LINE_BLOCK_SIZE) > 0){
-            printf("String:!%s!\n", buf);
-            res = check_command(strdup(buf));
-            printf("res = !%s!\n", res);}
+        fdSERVER = open(serverFIFO, O_RDONLY);
+        if(read(fdSERVER, buf, LINE_BLOCK_SIZE) > 0){
+            printf("String:%\n", buf);
+            replie = check_command(strdup(buf));
+            printf("res = !%s!\n", res);
+            close(fdSERVER);
+          //  char* pidFIFO = getFIFO(strdup(buf));
+//printf("pidFIFO : %s\n",pidFIFO);
+            fdCLIENTE = open(clienteFIFO, O_WRONLY);
+            write(fdCLIENTE, replie, strlen(replie));
+            close(fdCLIENTE);
+          }
           /*  if(!strcmp(res, "")){
                 perror("Invalid input.");
             }
             else {
                 char* pidFIFO = getFIFO(strdup(buf));
                 printf("pidFIFO = !%s!\n", pidFIFO);
-
                 fdPIDFIFO = open(pidFIFO, O_WRONLY);
                 write(fdPIDFIFO, res, strlen(res));
-
                 printf("Respondi para %s.\n", pidFIFO);
                 kill(get_pid_fifo(pidFIFO), SIGCONT);
                 free(pidFIFO);
