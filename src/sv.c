@@ -51,6 +51,20 @@ char* update_stock(int code, int stock){
     return strdup(result);
 }
 
+void save_venda(int code, int stock){
+    int fd = open("database/VENDAS", O_WRONLY | O_APPEND);
+    char venda[128] = "";
+    stock = stock * -1;
+
+    Artigo a = seek_artigo(code);
+    if (a) {
+        snprintf(venda, 128, "%d %d %f\n", 
+                code, stock, get_preco(a)*stock);
+        write(fd, venda, 128); 
+    }
+    close(fd);
+}
+
 char* exec_request(char* commands){
     printf("string : %s\n",commands);
     char *token = strtok(commands, " ");
@@ -69,9 +83,11 @@ char* exec_request(char* commands){
     //verificações checadas no cv
     if (cmds[2] == NULL) {
         return show_stock_price(atoi(cmds[0]));
-
     }
     else if (cmds[0] != NULL && cmds[1] != NULL) {
+        if(atoi(cmds[1]) < 0){
+            save_venda(atoi(cmds[0]), atoi(cmds[1]));
+        }
         return update_stock(atoi(cmds[0]), atoi(cmds[1]));
 
     }else {
