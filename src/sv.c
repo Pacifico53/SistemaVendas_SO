@@ -138,7 +138,7 @@ int main(){
 //printf("pidFIFO : %s\n",pidFIFO);
             fd_clienteFIFO = open(clienteFIFO, O_WRONLY);
             write(fd_clienteFIFO, replie, strlen(replie));
-
+            free(replie);
             close(fd_clienteFIFO);
           }
           /*  if(!strcmp(res, "")){

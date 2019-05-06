@@ -162,7 +162,9 @@ int main(){
           printf("replie : %s\n",replie);
           write(1,"yoo\n",4);
           close(fd_clienteFIFO);
-          /*close(fdSERVER);
+          memset(replie, 0, LINE_BLOCK_SIZE);
+          memset(buf,0,LINE_BLOCK_SIZE);
+          /*close(fdSERVER);1
           fdPIDFIFO = open(pidFIFO, O_RDONLY);
           pause();
 
