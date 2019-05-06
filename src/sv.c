@@ -52,6 +52,7 @@ char* update_stock(int code, int stock){
 }
 
 char* check_command(char* commands){
+    printf("string : %s\n",commands);
     char *token = strtok(commands, " ");
     char *cmds[2];
     cmds[0] = NULL;
@@ -63,9 +64,10 @@ char* check_command(char* commands){
         cmds[i++] = strdup(token);
         token = strtok(NULL, " ");
     }
+    printf("%s(pid) %s %s\n",cmds[0],cmds[1],cmds[2]);
 
     if (cmds[2] == NULL) {
-        if (isNumber(cmds[0]) && atoi(cmds[0]) > 0) {       
+        if (isNumber(cmds[0]) && atoi(cmds[0]) > 0) {
             return show_stock_price(atoi(cmds[0]));
         }
         else {
@@ -120,6 +122,7 @@ int main(){
     // Creating the named file(FIFO)
     mkfifo(serverFIFO, 0777);
     int fd, fdPIDFIFO;
+    char res[LINE_BLOCK_SIZE];
     char buf[LINE_BLOCK_SIZE];
 
     while (1){
@@ -129,8 +132,8 @@ int main(){
         if(read(fd, buf, LINE_BLOCK_SIZE) > 0){
             printf("String:!%s!\n", buf);
             res = check_command(strdup(buf));
-            printf("res = !%s!", res);
-            if(!strcmp(res, "")){
+            printf("res = !%s!\n", res);}
+          /*  if(!strcmp(res, "")){
                 perror("Invalid input.");
             }
             else {
@@ -146,11 +149,10 @@ int main(){
                 close(fdPIDFIFO);
             }
         }
-        snprintf(res, LINE_BLOCK_SIZE, " ");
-        snprintf(buf, LINE_BLOCK_SIZE, " ");
-        close(fd);
+        snprintf(res, LINE_BLOCK_SIZE, " ");*/
+        memset(buf,0,LINE_BLOCK_SIZE);//snprintf(buf, LINE_BLOCK_SIZE, "");
+        //close(fd);
     }
 
 	return 0;
 }
-
