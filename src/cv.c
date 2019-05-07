@@ -66,7 +66,7 @@ char* build_request_msg(char* cmds0, char* cmds1, int type){
 
 //checa se o comando é válido. ser for retorna char* com o pid+msg, caso contrário NULL
 char* check_command(char* commands){
-    printf("check command buf(readed) : %s\n",commands);
+    //printf("check command buf(readed) : %s\n",commands);
     char *token = strtok(commands, " ");
     char *cmds[2];
     cmds[0] = NULL;
@@ -87,7 +87,7 @@ char* check_command(char* commands){
     //comando tipo 1
     if (cmds[1] == NULL) {
         if (isNumber(cmds[0]) && atoi(cmds[0]) > 0) {
-            printf("1 -> cmds[0] : %s    cmds[1] : %s    cmds[2] : %s\n", cmds[0], cmds[1], cmds[2]);
+            //printf("1 -> cmds[0] : %s    cmds[1] : %s    cmds[2] : %s\n", cmds[0], cmds[1], cmds[2]);
             char* request = build_request_msg(cmds[0], cmds[1], 1);
             return request;
         }
@@ -99,7 +99,7 @@ char* check_command(char* commands){
     //comando tipo 2
     if (cmds[0] != NULL && cmds[1] != NULL) {
         if(isNumber(cmds[0]) && atoi(cmds[0]) > 0 && isNumber(cmds[1])){
-            printf("2 -> cmds[0] : %s    cmds[1] : %s    cmds[2] : %s\n", cmds[0], cmds[1], cmds[2]);
+            //printf("2 -> cmds[0] : %s    cmds[1] : %s    cmds[2] : %s\n", cmds[0], cmds[1], cmds[2]);
             char* request = build_request_msg(cmds[0], cmds[1], 2);
             return request;
         }
@@ -132,9 +132,11 @@ int main(){
         readline(buf, LINE_BLOCK_SIZE);
 
         if( (request = check_command(buf)) != NULL ){
+            /*
             printf("valid command\n");
             printf("Request command: %s  size: %ld  lenght : %ld\n",
                     request, sizeof(request), strlen(request));
+            */
             //Write the input on FIFO and close it
             write(fd_serverFIFO, request, strlen(request));
             free(request);
@@ -142,8 +144,8 @@ int main(){
 
             fd_clienteFIFO = open(clienteFIFO, O_RDONLY);
             read(fd_clienteFIFO, reply, LINE_BLOCK_SIZE);
-            printf("reply : %s\n",reply);
-            write(1,"yoo\n",4);
+            //printf("reply : %s\n",reply);
+            write(1,reply, strlen(reply));
             close(fd_clienteFIFO);
             memset(reply, 0, LINE_BLOCK_SIZE);
             memset(buf,0,LINE_BLOCK_SIZE);

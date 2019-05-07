@@ -35,7 +35,7 @@ char* show_stock_price(int code){
     Artigo a = seek_artigo(code);
     char result[128] = "";
     if(a){
-        snprintf(result, 128, "Stock = %d\nPreço = %f\n", get_stock(a), get_preco(a));
+        snprintf(result, 128, "Stock = %d\nPreço = %d\n", get_stock(a), get_preco(a));
     }
     return strdup(result);
 }
@@ -58,7 +58,7 @@ void save_venda(int code, int stock){
 
     Artigo a = seek_artigo(code);
     if (a) {
-        snprintf(venda, 128, "%d %d %f\n", 
+        snprintf(venda, 128, "%d %d %d\n", 
                 code, stock, get_preco(a)*stock);
         write(fd, venda, 128); 
     }
@@ -66,7 +66,7 @@ void save_venda(int code, int stock){
 }
 
 char* exec_request(char* commands){
-    printf("string : %s\n",commands);
+    //printf("String : %s\n",commands);
     char *token = strtok(commands, " ");
     char *cmds[2];
     cmds[0] = NULL;
@@ -78,7 +78,7 @@ char* exec_request(char* commands){
         cmds[i++] = strdup(token);
         token = strtok(NULL, " ");
     }
-    printf("%s %s %s\n",cmds[0],cmds[1],cmds[2]);
+    //printf("%s %s %s\n",cmds[0],cmds[1],cmds[2]);
 
     //verificações checadas no cv
     if (cmds[2] == NULL) {
@@ -109,11 +109,9 @@ char* getFIFO(char* buffer){
         token = strtok(NULL, " ");
     }
     if (cmds[2] == NULL) {
-        printf("pid=%s\n", cmds[1]);
         return strdup(cmds[1]);
     }
     else{
-        printf("pid=%s\n", cmds[2]);
         return strdup(cmds[2]);
     }
 }
@@ -146,20 +144,22 @@ int main(){
         }
 
         if( read(fd_serverFIFO, buf, LINE_BLOCK_SIZE) > 0 ){
-            printf("String:%s\n", buf);
             reply = exec_request(strdup(buf));
+            /*
             if(reply == NULL){
               printf("fudeuuu\n");
             }
-            printf("cenas\n");
+            */
             snprintf(clienteFIFO, 128, "database/clienteFIFO%s", getFIFO(strdup(buf)));
             fd_clienteFIFO = open(clienteFIFO, O_WRONLY);
             write(fd_clienteFIFO, reply, strlen(reply));
             free(reply);
             close(fd_clienteFIFO);
+            printf("===Enviada Resposta===\n");
         }
         memset(buf,0,LINE_BLOCK_SIZE);
     }
 
 	return 0;
 }
+

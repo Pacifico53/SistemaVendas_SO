@@ -18,21 +18,21 @@ int readline(char *buffer, int size){   //retorna os bytes lidos
     char c;
     if(buffer == NULL || size == 0)
         return 0;
-    while(read(1, &c, 1) == 1 && i < size - 1){
+    while(read(0, &c, 1) == 1 && i < size - 1){
         if(c == '\n'){
             buffer[i] = 0;
             return i;
         }
         buffer[i++] = c;
     }
-    buffer[i] = 0; // making sure it's 0-terminated
+    buffer[i] = '\0'; // making sure it's 0-terminated
     return i;
 }
 
 int isNumber(char* str){
    int i = 0, flag = 0;
    for (i = 0; str[i] && flag == 0; i++) {
-       if (isdigit(str[i]) == 0 && str[i] != '.') {
+       if (isdigit(str[i]) == 0) {
             flag = 1;
        }
    }
@@ -46,7 +46,7 @@ int isValidComandcmd(char* cmd0, char* cmd1, char* cmd2){
         if(cmd0 == NULL || cmd1 == NULL || cmd2 == NULL){
           return 0;
         }
-        if (isNumber(cmd1) == 1 && isNumber(cmd2) == 0 && strtof(cmd2, NULL) >= 0) {
+        if (isNumber(cmd1) == 1 && isNumber(cmd2) == 0 && atoi(cmd2) >= 0) {
             return 1;
         }
         else {
@@ -72,7 +72,7 @@ int isValidComandcmd(char* cmd0, char* cmd1, char* cmd2){
         if(cmd0 == NULL || cmd1 == NULL || cmd2 == NULL){
             return 0;
           }
-        if (isNumber(cmd1) == 0 && isNumber(cmd2) == 0 && atoi(cmd1) > 0 && strtof(cmd2, NULL) >= 0) {
+        if (isNumber(cmd1) == 0 && isNumber(cmd2) == 0 && atoi(cmd1) > 0 && atoi(cmd2) >= 0) {
             return 3;
         }
         else {
@@ -140,7 +140,7 @@ void change_nome_artigo(int code, char* n){
     }
 }
 
-void change_preco_artigo(int code, float p){
+void change_preco_artigo(int code, int p){
     Artigo a = seek_artigo(code);
     if(a){
         set_preco(a, p);
@@ -192,11 +192,11 @@ int main(){
             if((validcmd = isValidComandcmd(commands[0], commands[1], commands[2])) > 0 ){
                 printf("COMANDO VALIDO\n");
                 switch(validcmd){
-                    case 1: register_new_artigo(commands[1], strtof(commands[2], NULL), currCod++);
+                    case 1: register_new_artigo(commands[1], atoi(commands[2]), currCod++);
                             break;
                     case 2: change_nome_artigo(atoi(commands[1]), commands[2]);
                             break;
-                    case 3: change_preco_artigo(atoi(commands[1]), strtof(commands[2], NULL));
+                    case 3: change_preco_artigo(atoi(commands[1]), atoi(commands[2]));
                             break;
                     case 4: show_artigo(atoi(commands[1]));
                             break;
