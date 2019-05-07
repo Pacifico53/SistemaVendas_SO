@@ -53,14 +53,14 @@ char* update_stock(int code, int stock){
 
 void save_venda(int code, int stock){
     int fd = open("database/VENDAS", O_WRONLY | O_APPEND);
-    char venda[128] = "";
+    char venda[64] = "";
     stock = stock * -1;
 
     Artigo a = seek_artigo(code);
     if (a) {
-        snprintf(venda, 128, "%d %d %d\n", 
+        snprintf(venda, 64, "%d %d %d\n",
                 code, stock, get_preco(a)*stock);
-        write(fd, venda, 128); 
+        write(fd, venda, 64);
     }
     close(fd);
 }

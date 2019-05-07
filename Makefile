@@ -1,7 +1,7 @@
 CC = gcc
 CFLAGS=-Wall
 
-all: manutencaoArtigos testing servidorVendas clienteVendas
+all: manutencaoArtigos testing servidorVendas clienteVendas agregador
 
 manutencaoArtigos:
 	$(CC) $(CFLAGS) -o ma src/ma.c src/lib/artigo.c
@@ -12,11 +12,14 @@ servidorVendas:
 clienteVendas:
 	$(CC) $(CFLAGS) -o cv src/cv.c src/lib/artigo.c
 
+agregador:
+	$(CC) $(CFLAGS) -o ag src/ag.c src/lib/artigo.c
+
 testing:
 	$(CC) $(CFLAGS) -o testing src/testing.c src/lib/artigo.c
 
 clean:
-	rm -f ma testing cv sv database/serverFIFO database/clienteFIFO*
+	rm -f ma testing cv sv ag database/serverFIFO database/clienteFIFO* database/20*
 
 resetDB:
 	rm -f database/*
