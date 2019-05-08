@@ -50,7 +50,7 @@ int main(){
     snprintf(file, 64, "database/%s", strTime);
 
     printf("time = %s\n", file);
-    int fdFinal = open(file, O_WRONLY | O_CREAT | O_APPEND);
+    int fdFinal = open(file, O_WRONLY | O_CREAT | O_APPEND, 0666);
 
     int fdArtigos = open("database/ARTIGOS", O_RDONLY);
     int posFinal = lseek(fdArtigos, 0, SEEK_END);
