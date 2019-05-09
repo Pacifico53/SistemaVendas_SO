@@ -144,6 +144,7 @@ void menuShow(){
     write(1, " c <código>               --> mostra nome + preço do artigo com esse código\n", 79);
     write(1, " l                        --> lista artigos código + nome + preço\n", 68);
     write(1, " m                        --> mostra menu\n", 42);
+    write(1, " a                        --> corre agregador\n", 46);
     write(1, "--------------------------------------------------------------\n\n", 64);
 }
 
