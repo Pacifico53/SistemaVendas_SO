@@ -1,3 +1,2 @@
 -output dos comandos i n p
--comando l da output de um erro Name not found
 
