@@ -1,9 +1,29 @@
 // MANUTENÇÃO DE ARTIGOS
 // ao compilar (makefile) este ficheiro deverá gerar o ficheiro ma executável
 #include <ctype.h>
+#include <stdio.h>
+#include <fcntl.h>
+#include <unistd.h>
+#include <time.h>
+#include <string.h>
+#include <stdlib.h>
+#include <sys/wait.h>
 #include "../include/artigo.h"
 
 #define LINE_BLOCK_SIZE 128
+
+
+void run_agredador(){
+  int cpid;
+  if( (cpid = fork()) == 0){
+    execv("./ag",NULL);
+  }else if( cpid == -1 ){
+    perror("Agregador FORK ERROR");
+  }
+
+}
+
+
 
 
 int readline(char *buffer, int size){   //retorna os bytes lidos
@@ -106,6 +126,13 @@ int isValidComandcmd(char* cmd0, char* cmd1, char* cmd2){
           }
         return 6;
     }
+
+    if(strcmp(cmd0,"a") == 0){
+      if(cmd0 == NULL){
+        return 0;
+      }
+      return 7;
+    }
     return 0;
 }
 
@@ -118,6 +145,7 @@ void menuShow(){
     printf(" c <código>               --> mostra nome + preço do artigo com esse código\n");
     printf(" l                        --> lista artigos código + nome + preço\n");
     printf(" m                        --> mostra menu\n");
+    printf(" a                        --> corre agregador\n");
     printf("--------------------------------------------------------------\n");
     printf("\n");
 }
@@ -198,6 +226,8 @@ int main(){
                             break;
                     case 6: menuShow();
                             break;
+                    case 7: run_agredador();
+                            break;
                 }
             }
             else{
@@ -213,4 +243,3 @@ int main(){
     }
     return 0;
 }
-
