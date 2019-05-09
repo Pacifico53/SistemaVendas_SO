@@ -20,7 +20,6 @@ void run_agredador(){
   }else if( cpid == -1 ){
     perror("Agregador FORK ERROR");
   }
-
 }
 
 
@@ -138,22 +137,22 @@ int isValidComandcmd(char* cmd0, char* cmd1, char* cmd2){
 
 
 void menuShow(){
-    printf("------------------MANUTENÇÃO DE ARTIGOS-----------------------\n");
-    printf(" i <nome> preço           --> insere novo artigo, mostra código\n");
-    printf(" n <código> <novo nome>   --> altera nome do artigo\n");
-    printf(" p <código> <novo preço>  --> altera preço do artigo\n" );
-    printf(" c <código>               --> mostra nome + preço do artigo com esse código\n");
-    printf(" l                        --> lista artigos código + nome + preço\n");
-    printf(" m                        --> mostra menu\n");
-    printf(" a                        --> corre agregador\n");
-    printf("--------------------------------------------------------------\n");
-    printf("\n");
+    write(1 , "------------------MANUTENÇÃO DE ARTIGOS-----------------------\n", 65);
+    write(1, " i <nome> preço           --> insere novo artigo, mostra código\n", 66);
+    write(1, " n <código> <novo nome>   --> altera nome do artigo\n", 53);
+    write(1, " p <código> <novo preço>  --> altera preço do artigo\n", 56);
+    write(1, " c <código>               --> mostra nome + preço do artigo com esse código\n", 79);
+    write(1, " l                        --> lista artigos código + nome + preço\n", 68);
+    write(1, " m                        --> mostra menu\n", 42);
+    write(1, "--------------------------------------------------------------\n\n", 64);
 }
 
 void register_new_artigo(char* n, int p, int code){
     Artigo a = create_artigo(n, p, code);
     save_artigo(a);
-    printf("%d\n",code);
+    char str[64] = "";
+    snprintf(str, 64, "%d\n", code);
+    write(1, str, strlen(str));
     free(a);
 }
 
@@ -231,7 +230,7 @@ int main(){
                 }
             }
             else{
-                perror("Invalid command type/input, please insert one of the commands listed.");
+                perror("Invalid command type/input, please type \"m\" for all available commands.");
             }
         }
         else if (rl == -1) {

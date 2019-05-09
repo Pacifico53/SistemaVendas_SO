@@ -148,7 +148,7 @@ int main(){
             memset(reply, 0, LINE_BLOCK_SIZE);
             memset(buf,0,LINE_BLOCK_SIZE);
         } else{
-            printf("Invalid comand\n");
+            write(1, "Invalid comand\n", 15);
         }
 
         memset(reply, 0, LINE_BLOCK_SIZE);
