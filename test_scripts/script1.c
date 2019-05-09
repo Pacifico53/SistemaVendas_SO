@@ -13,7 +13,6 @@ int main(){
         snprintf(buf, 64, "i A%d %d\n", i, i);
         write(fd, buf, strlen(buf));
     }
-    write(fd, "\n", 1); //aaa
     printf("All done\n");
     return 0;
 }

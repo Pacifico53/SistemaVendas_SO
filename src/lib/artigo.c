@@ -23,11 +23,8 @@ Artigo seek_artigo(int code){
 
     char buf[64] = "";
     if (read(fd, buf, 64) != 64) {
-        printf("Erro a ler\n");
+        perror("Erro a ler artigo\n");
         return 0;
-    }
-    else {
-        printf("Artigo com codigo %d encontrado:\n", code);
     }
 
     char* token;
@@ -123,11 +120,8 @@ void change_stock(Artigo a, int stock){
 
     lseek(fd, pos, SEEK_SET);
 
-    if ((write(fd, str, 64) > 1) && (write(fd, "\n", 1) > 0)) {
-        printf("Success writing to file STOCKS.\n");
-    }
-    else {
-        printf("Error writing to file STOCKS.\n");
+    if (!(write(fd, str, 64) > 1) || !(write(fd, "\n", 1) > 0)) {
+        perror("Failure writing to file STOCKS.\n");
     }
 
     close(fd);
@@ -141,11 +135,8 @@ void save_artigo(Artigo a){
 
     lseek(fd, pos, SEEK_SET);
 
-    if ((write(fd, str, 64) > 1) && (write(fd, "\n", 1) > 0)) {
-        printf("Success writing to file ARTIGOS.\n");
-    }
-    else {
-        printf("Error writing to file ARTIGOS.\n");
+    if (!(write(fd, str, 64) > 1) || !(write(fd, "\n", 1) > 0)) {
+        perror("Failure writing to file ARTIGOS.\n");
     }
 
     close(fd);
@@ -157,11 +148,8 @@ int save_name(char* name){
     int fd = open("database/STRINGS", O_WRONLY | O_APPEND);
 
     int r = lseek(fd, 0, SEEK_END);
-    if ((write(fd, name, strlen(name)) > 0) && (write(fd, "\n", 1) > 0)) {
-        printf("Success writing to file STRINGS.\n");
-    }
-    else {
-        printf("Error writing to file STRINGS.\n");
+    if (!(write(fd, name, strlen(name)) > 0) || !(write(fd, "\n", 1) > 0)) {
+        perror("Failure writing to file STRINGS.\n");
     }
 
     close(fd);

@@ -49,13 +49,11 @@ int main(){
     strftime (strTime, 21, "%Y-%m-%dT%H:%M:%S", localTime);
     snprintf(file, 64, "database/%s", strTime);
 
-    printf("time = %s\n", file);
     int fdFinal = open(file, O_WRONLY | O_CREAT | O_APPEND, 0666);
 
     int fdArtigos = open("database/ARTIGOS", O_RDONLY);
     int posFinal = lseek(fdArtigos, 0, SEEK_END);
     int codeFinal = (posFinal / 65);
-    printf("code final = %d\n", codeFinal);
     int i = 0, status = 0;
     pid_t pid;
     for(i = 1; i <= codeFinal; i++){
@@ -72,5 +70,4 @@ int main(){
 
     return 0;
 }
-
 

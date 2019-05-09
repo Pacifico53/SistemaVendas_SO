@@ -50,23 +50,24 @@ int isNumber(char* str){
 char* build_request_msg(char* cmds0, char* cmds1, int type){
     if(type == 1){
         char* request = malloc(sizeof(LINE_BLOCK_SIZE));
-        snprintf(request, sizeof(request)+20, "%s %d", cmds0, getpid());
+        snprintf(request, LINE_BLOCK_SIZE, "%s %d", cmds0, getpid());
         return request;
     }
 
     if(type == 2){
         char* request = malloc(sizeof(LINE_BLOCK_SIZE));
-        snprintf(request, sizeof(request)+20, "%s %s %d", cmds0, cmds1, getpid());
+        snprintf(request, LINE_BLOCK_SIZE, "%s %s %d", cmds0, cmds1, getpid());
         return request;
     }
 
-    printf("cv Invalid command created\n");
     return NULL;
 }
 
 //checa se o comando é válido. ser for retorna char* com o pid+msg, caso contrário NULL
 char* check_command(char* commands){
-    //printf("check command buf(readed) : %s\n",commands);
+    if(!strcmp(commands,"\0")){
+        return NULL;
+    }
     char *token = strtok(commands, " ");
     char *cmds[2];
     cmds[0] = NULL;
@@ -87,7 +88,6 @@ char* check_command(char* commands){
     //comando tipo 1
     if (cmds[1] == NULL) {
         if (isNumber(cmds[0]) && atoi(cmds[0]) > 0) {
-            //printf("1 -> cmds[0] : %s    cmds[1] : %s    cmds[2] : %s\n", cmds[0], cmds[1], cmds[2]);
             char* request = build_request_msg(cmds[0], cmds[1], 1);
             return request;
         }
@@ -99,7 +99,6 @@ char* check_command(char* commands){
     //comando tipo 2
     if (cmds[0] != NULL && cmds[1] != NULL) {
         if(isNumber(cmds[0]) && atoi(cmds[0]) > 0 && isNumber(cmds[1])){
-            //printf("2 -> cmds[0] : %s    cmds[1] : %s    cmds[2] : %s\n", cmds[0], cmds[1], cmds[2]);
             char* request = build_request_msg(cmds[0], cmds[1], 2);
             return request;
         }
@@ -132,11 +131,6 @@ int main(){
         readline(buf, LINE_BLOCK_SIZE);
 
         if( (request = check_command(buf)) != NULL ){
-            /*
-            printf("valid command\n");
-            printf("Request command: %s  size: %ld  lenght : %ld\n",
-                    request, sizeof(request), strlen(request));
-            */
             //Write the input on FIFO and close it
             write(fd_serverFIFO, request, strlen(request));
             free(request);
@@ -144,7 +138,6 @@ int main(){
 
             fd_clienteFIFO = open(clienteFIFO, O_RDONLY);
             read(fd_clienteFIFO, reply, LINE_BLOCK_SIZE);
-            //printf("reply : %s\n",reply);
             write(1,reply, strlen(reply));
             close(fd_clienteFIFO);
             memset(reply, 0, LINE_BLOCK_SIZE);
@@ -152,7 +145,11 @@ int main(){
         } else{
             printf("Invalid comand\n");
         }
+        
+        memset(reply, 0, LINE_BLOCK_SIZE);
+        memset(buf,0,LINE_BLOCK_SIZE);
+        memset(reply, 0, LINE_BLOCK_SIZE);
     }
-    printf("Done.\n");
     return 0;
 }
+

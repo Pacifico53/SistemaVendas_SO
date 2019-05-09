@@ -66,7 +66,6 @@ void save_venda(int code, int stock){
 }
 
 char* exec_request(char* commands){
-    //printf("String : %s\n",commands);
     char *token = strtok(commands, " ");
     char *cmds[2];
     cmds[0] = NULL;
@@ -78,21 +77,16 @@ char* exec_request(char* commands){
         cmds[i++] = strdup(token);
         token = strtok(NULL, " ");
     }
-    //printf("%s %s %s\n",cmds[0],cmds[1],cmds[2]);
 
     //verificações checadas no cv
     if (cmds[2] == NULL) {
         return show_stock_price(atoi(cmds[0]));
     }
-    else if (cmds[0] != NULL && cmds[1] != NULL) {
+    else{
         if(atoi(cmds[1]) < 0){
             save_venda(atoi(cmds[0]), atoi(cmds[1]));
         }
         return update_stock(atoi(cmds[0]), atoi(cmds[1]));
-
-    }else {
-        printf("Fudeuu\n");
-        return NULL;
     }
 }
 
@@ -116,15 +110,6 @@ char* getFIFO(char* buffer){
     }
 }
 
-pid_t get_pid_fifo(char* file){
-    int i, j = 0, len = strlen(file);
-    char pid[5];
-    for (i = len - 5; i < len; i++) {
-        pid[j++] = file[i];
-    }
-    return (pid_t)(atoi(pid));
-}
-
 int main(){
     // FIFO file path
     char *serverFIFO = "database/serverFIFO";
@@ -143,19 +128,13 @@ int main(){
           perror("sv Opening fd serverFIFO");
         }
 
-        if( read(fd_serverFIFO, buf, LINE_BLOCK_SIZE) > 0 ){
+        if(read(fd_serverFIFO, buf, LINE_BLOCK_SIZE) > 0){
             reply = exec_request(strdup(buf));
-            /*
-            if(reply == NULL){
-              printf("fudeuuu\n");
-            }
-            */
             snprintf(clienteFIFO, 128, "database/clienteFIFO%s", getFIFO(strdup(buf)));
             fd_clienteFIFO = open(clienteFIFO, O_WRONLY);
             write(fd_clienteFIFO, reply, strlen(reply));
             free(reply);
             close(fd_clienteFIFO);
-            printf("===Enviada Resposta===\n");
         }
         memset(buf,0,LINE_BLOCK_SIZE);
     }

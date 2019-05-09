@@ -16,14 +16,18 @@
 int readline(char *buffer, int size){   //retorna os bytes lidos
     int i = 0;
     char c;
+    int bytes = 0;
     if(buffer == NULL || size == 0)
         return 0;
-    while(read(0, &c, 1) == 1 && i < size - 1){
+    while((bytes = read(0, &c, 1)) != 0 && i < size - 1){
         if(c == '\n'){
             buffer[i] = 0;
             return i;
         }
         buffer[i++] = c;
+    }
+    if (bytes == 0) {
+        return -1;
     }
     buffer[i] = '\0'; // making sure it's 0-terminated
     return i;
@@ -128,7 +132,7 @@ void menuShow(){
 void register_new_artigo(char* n, int p, int code){
     Artigo a = create_artigo(n, p, code);
     save_artigo(a);
-    printf("Codigo = %d\n",code);
+    printf("%d\n",code);
     free(a);
 }
 
@@ -166,9 +170,7 @@ int main(){
     int fdArtigos = open("database/ARTIGOS", O_RDONLY);
     int currCod = (lseek(fdArtigos, 0, SEEK_END) / 65) + 1;
     close(fdArtigos);
-    menuShow();
     int rl;
-
 
     while(1){
         char buf[LINE_BLOCK_SIZE];
@@ -190,7 +192,6 @@ int main(){
             int validcmd;
             //swich options menu
             if((validcmd = isValidComandcmd(commands[0], commands[1], commands[2])) > 0 ){
-                printf("COMANDO VALIDO\n");
                 switch(validcmd){
                     case 1: register_new_artigo(commands[1], atoi(commands[2]), currCod++);
                             break;
@@ -204,18 +205,19 @@ int main(){
                             break;
                     case 6: menuShow();
                             break;
-                    default: printf("-----------------------\n");
                 }
             }
             else{
                 perror("Invalid command type/input, please insert one of the commands listed.");
             }
         }
+        else if (rl == -1) {
+            break;
+        }
         else{
             perror("No line read.");
         }
     }
-
     return 0;
 }
 
