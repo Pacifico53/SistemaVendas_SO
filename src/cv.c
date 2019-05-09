@@ -115,7 +115,6 @@ int main(){
     char *serverFIFO = "database/serverFIFO";
     char clienteFIFO[128] = "";
     snprintf(clienteFIFO, 128, "database/clienteFIFO%d", getpid());
-    char  reply[128];
     int fd_serverFIFO, fd_clienteFIFO;
     int rl = 0;
 
@@ -126,6 +125,9 @@ int main(){
     while (1){
         char *request;
         char buf[LINE_BLOCK_SIZE];
+        char reply[128];
+        memset(reply, 0, LINE_BLOCK_SIZE);
+        memset(buf,0,LINE_BLOCK_SIZE);
 
         if( (fd_serverFIFO = open(serverFIFO, O_WRONLY)) == -1){
           perror("cv Opening fd serverFIFO");
@@ -139,7 +141,6 @@ int main(){
         if( (request = check_command(buf)) != NULL ){
             //Write the input on FIFO and close it
             write(fd_serverFIFO, request, strlen(request));
-            free(request);
             close(fd_serverFIFO);
 
             fd_clienteFIFO = open(clienteFIFO, O_RDONLY);
@@ -151,11 +152,10 @@ int main(){
         } else{
             printf("Invalid comand\n");
         }
-        
+
         memset(reply, 0, LINE_BLOCK_SIZE);
         memset(buf,0,LINE_BLOCK_SIZE);
-        memset(reply, 0, LINE_BLOCK_SIZE);
+        free(request);
     }
     return 0;
 }
-
