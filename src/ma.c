@@ -1,12 +1,5 @@
 // MANUTENÇÃO DE ARTIGOS
 // ao compilar (makefile) este ficheiro deverá gerar o ficheiro ma executável
-#include <unistd.h>
-#include <fcntl.h>
-#include <sys/wait.h>
-#include <sys/types.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
 #include <ctype.h>
 #include "../include/artigo.h"
 

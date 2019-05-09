@@ -26,5 +26,5 @@ clean:
 
 resetDB:
 	rm -f database/*
-	touch database/ARTIGOS database/STOCKS database/STRINGS database/VENDAS database/20*
+	touch database/ARTIGOS database/STOCKS database/STRINGS database/VENDAS
 

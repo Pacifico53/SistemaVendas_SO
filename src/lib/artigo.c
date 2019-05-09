@@ -68,7 +68,7 @@ char* get_nome(Artigo a){
     lseek(fd, a->nome, SEEK_SET);
     char n[64];
 
-    if(read(fd, n, 64) != 64){
+    if(read(fd, n, 64) < 0){
         perror("Name not found.");
     }
     int i = 0, flag = 1;
@@ -98,7 +98,7 @@ int get_stock(Artigo a){
     char buf[64];
 
     if(read(fd, buf, 64) < 0){
-        perror("Name not found.");
+        perror("Stock not found.");
     }
     int i = 0, flag = 1;
     for (i = 0; i < 64 && flag; i++) {

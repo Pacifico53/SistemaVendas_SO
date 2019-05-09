@@ -9,6 +9,10 @@ int main(){
     int fdArtigos = open("database/ARTIGOS", O_RDONLY);
     int posFinal = lseek(fdArtigos, 0, SEEK_END);
     int codeFinal = (posFinal / 65);
+    if (codeFinal == 0) {
+        printf("Erro, nao existem artigo!\nA sair...\n");
+        return 1;
+    }
 
     int i, j;
 
@@ -18,7 +22,7 @@ int main(){
         snprintf(buf, 64, "%d 100\n", i);
         write(fd, buf, strlen(buf));
     }
-    printf("Done.\nA fazer as compras...");
+    printf("Done.\nA fazer as compras...\n");
 
     for(i = 0; i < 10; i++){
         for (j = 1; j <= codeFinal; j++) {

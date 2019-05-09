@@ -1,6 +1,3 @@
 -output dos comandos i n p
--só para ter um commit hoje e uma cena verde xD
-!-mudar readline para parar com EOF!
--as vezes o cv da output lixo
 -comando l da output de um erro Name not found
 
