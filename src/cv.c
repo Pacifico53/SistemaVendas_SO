@@ -12,21 +12,23 @@
 
 #define LINE_BLOCK_SIZE 128
 
-int readline(char* buffer, int size){   //se retornar-mos o i temos os numeros de byts lidos/até ao '\n'
+int readline(char *buffer, int size){   //retorna os bytes lidos
     int i = 0;
     char c;
-
+    int bytes = 0;
     if(buffer == NULL || size == 0)
         return 0;
-
-    while( read(0,&c,1) == 1 && i<size-1 ){
-        if( c == '\n'){
+    while((bytes = read(0, &c, 1)) != 0 && i < size - 1){
+        if(c == '\n'){
             buffer[i] = 0;
             return i;
         }
-        buffer[i++]=c;
+        buffer[i++] = c;
     }
-    buffer[i]=0;
+    if (bytes == 0) {
+        return -1;
+    }
+    buffer[i] = '\0'; // making sure it's 0-terminated
     return i;
 }
 
@@ -115,6 +117,7 @@ int main(){
     snprintf(clienteFIFO, 128, "database/clienteFIFO%d", getpid());
     char  reply[128];
     int fd_serverFIFO, fd_clienteFIFO;
+    int rl = 0;
 
     if( (mkfifo(clienteFIFO, 0777)) == -1){
       perror("cv Creating clienteFIFO");
@@ -128,7 +131,10 @@ int main(){
           perror("cv Opening fd serverFIFO");
         }
         // Take an input from user.
-        readline(buf, LINE_BLOCK_SIZE);
+        rl = readline(buf, LINE_BLOCK_SIZE);
+        if (rl == -1) {
+            break;
+        }
 
         if( (request = check_command(buf)) != NULL ){
             //Write the input on FIFO and close it

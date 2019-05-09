@@ -16,12 +16,15 @@ agregador:
 	$(CC) $(CFLAGS) -o ag src/ag.c src/lib/artigo.c
 
 scripts:
-	$(CC) $(CFLAGS) -o scr test_scripts/script1.c
+	$(CC) $(CFLAGS) -o scriptMA test_scripts/script1.c
+	$(CC) $(CFLAGS) -o scriptCV test_scripts/script2.c
 
 clean:
-	rm -f ma cv sv ag scr database/serverFIFO database/clienteFIFO* database/20*
+	rm -f ma cv sv ag scriptMA scriptCV 
+	rm -f database/serverFIFO database/clienteFIFO*
+	rm -f test_scripts/insertScript test_scripts/vendasScript
 
 resetDB:
 	rm -f database/*
-	touch database/ARTIGOS database/STOCKS database/STRINGS database/VENDAS
+	touch database/ARTIGOS database/STOCKS database/STRINGS database/VENDAS database/20*
 

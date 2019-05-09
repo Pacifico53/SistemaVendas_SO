@@ -42,25 +42,26 @@ char* show_stock_price(int code){
 
 char* update_stock(int code, int stock){
     Artigo a = seek_artigo(code);
-    char result[128];
+    char* result = malloc(128);
     if (a) {
         change_stock(a, get_stock(a)+stock);
         snprintf(result, 128, "Stock = %d\n", get_stock(a));
         free(a);
     }
-    return strdup(result);
+    return result;
 }
 
 void save_venda(int code, int stock){
     int fd = open("database/VENDAS", O_WRONLY | O_APPEND);
-    char venda[64] = "";
+    char venda[63] = "";
     stock = stock * -1;
 
     Artigo a = seek_artigo(code);
     if (a) {
-        snprintf(venda, 64, "%d %d %d\n",
+        snprintf(venda, 63, "%d %d %d",
                 code, stock, get_preco(a)*stock);
-        write(fd, venda, 64);
+        write(fd, venda, 63);
+        write(fd, "\n", 1);
     }
     close(fd);
 }
