@@ -8,7 +8,7 @@
 #include <sys/stat.h>
 #include <ctype.h>
 
-#define LINE_BLOCK_SIZE 128
+#define LINE_BLOCK_SIZE 32
 
 int readline(char *buffer, int size){   //retorna os bytes lidos
     int i = 0;
@@ -123,9 +123,9 @@ int main(){
     while (1){
         char *request;
         char buf[LINE_BLOCK_SIZE];
-        char reply[128];
+        char reply[LINE_BLOCK_SIZE];
         memset(reply, 0, LINE_BLOCK_SIZE);
-        memset(buf,0,LINE_BLOCK_SIZE);
+        memset(buf,0, LINE_BLOCK_SIZE);
 
         if( (fd_serverFIFO = open(serverFIFO, O_WRONLY)) == -1){
           perror("cv Opening fd serverFIFO");
@@ -136,9 +136,10 @@ int main(){
             break;
         }
 
-        if( (request = check_command(buf)) != NULL ){
+        if((request = check_command(strdup(buf))) != NULL ){
             //Write the input on FIFO and close it
-            write(fd_serverFIFO, request, strlen(request));
+            usleep(50);
+            write(fd_serverFIFO, request, LINE_BLOCK_SIZE);
             close(fd_serverFIFO);
 
             fd_clienteFIFO = open(clienteFIFO, O_RDONLY);
@@ -146,13 +147,13 @@ int main(){
             write(1,reply, strlen(reply));
             close(fd_clienteFIFO);
             memset(reply, 0, LINE_BLOCK_SIZE);
-            memset(buf,0,LINE_BLOCK_SIZE);
+            memset(buf,0, LINE_BLOCK_SIZE);
         } else{
             write(1, "Invalid comand\n", 15);
         }
 
         memset(reply, 0, LINE_BLOCK_SIZE);
-        memset(buf,0,LINE_BLOCK_SIZE);
+        memset(buf,0, LINE_BLOCK_SIZE);
         free(request);
     }
     return 0;

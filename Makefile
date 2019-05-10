@@ -19,6 +19,11 @@ scripts:
 	$(CC) $(CFLAGS) -o scriptMA test_scripts/script1.c
 	$(CC) $(CFLAGS) -o scriptCV test_scripts/script2.c
 
+automate:
+	./scriptMA
+	./ma < test_scripts/insertScript
+	./scriptCV
+
 clean:
 	rm -f ma cv sv ag scriptMA scriptCV 
 	rm -f database/serverFIFO database/clienteFIFO*

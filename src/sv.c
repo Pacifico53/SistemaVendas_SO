@@ -4,7 +4,7 @@
 #include <ctype.h>
 #include "../include/artigo.h"
 
-#define LINE_BLOCK_SIZE 128
+#define LINE_BLOCK_SIZE 32
 
 
 int isNumber(char* str){
@@ -26,20 +26,20 @@ int isNumber(char* str){
 
 char* show_stock_price(int code){
     Artigo a = seek_artigo(code);
-    char result[128] = "";
+    char result[LINE_BLOCK_SIZE] = "";
     if(a){
-        snprintf(result, 128, "%d %d\n", get_stock(a), get_preco(a));
+        snprintf(result, LINE_BLOCK_SIZE, "%d %d\n", get_stock(a), get_preco(a));
     }
     return strdup(result);
 }
 
 char* update_stock(int code, int stock){
     Artigo a = seek_artigo(code);
-    char result[128] = "";
+    char result[LINE_BLOCK_SIZE] = "";
     if (a) {
         int stockFinal = get_stock(a)+stock > 0 ? get_stock(a)+stock : 0;
         change_stock(a, stockFinal);
-        snprintf(result, 128, "%d\n", get_stock(a));
+        snprintf(result, LINE_BLOCK_SIZE, "%d\n", get_stock(a));
         free(a);
     }
     return strdup(result);
@@ -130,7 +130,7 @@ int main(){
             reply = exec_request(strdup(buf));
             snprintf(clienteFIFO, 128, "database/clienteFIFO%s", getFIFO(strdup(buf)));
             fd_clienteFIFO = open(clienteFIFO, O_WRONLY);
-            write(fd_clienteFIFO, reply, strlen(reply));
+            write(fd_clienteFIFO, reply, LINE_BLOCK_SIZE);
             free(reply);
             close(fd_clienteFIFO);
         }
