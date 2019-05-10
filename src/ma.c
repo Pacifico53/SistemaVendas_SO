@@ -1,29 +1,26 @@
 // MANUTENÇÃO DE ARTIGOS
 // ao compilar (makefile) este ficheiro deverá gerar o ficheiro ma executável
-#include <ctype.h>
-#include <stdio.h>
-#include <fcntl.h>
-#include <unistd.h>
-#include <time.h>
-#include <string.h>
-#include <stdlib.h>
 #include <sys/wait.h>
+#include <ctype.h>
 #include "../include/artigo.h"
 
 #define LINE_BLOCK_SIZE 128
 
-
 void run_agredador(){
-  int cpid;
-  if( (cpid = fork()) == 0){
-    execv("./ag",NULL);
-  }else if( cpid == -1 ){
-    perror("Agregador FORK ERROR");
-  }
+    char* args[] = {"./ag", NULL};
+    int cpid, status = 0;
+    if( (cpid = fork()) == 0){
+        write(1, "A agregar vendas...\n", 20);
+        execv(args[0], args);
+    }
+    else if( cpid == -1 ){
+        perror("Agregador FORK ERROR");
+    }
+    else {
+        wait(&status);
+        write(1, "Done.\n", 6);
+    }
 }
-
-
-
 
 int readline(char *buffer, int size){   //retorna os bytes lidos
     int i = 0;
