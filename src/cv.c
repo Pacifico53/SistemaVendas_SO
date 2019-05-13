@@ -125,29 +125,28 @@ int main(){
     }
 
 
-      char *request;
-      char buf[LINE_BLOCK_SIZE];
-    	char reply[LINE_BLOCK_SIZE];
+    char *request;
+    char buf[LINE_BLOCK_SIZE];
+    char reply[LINE_BLOCK_SIZE];
 
-     while(1){
-	      int br=0;
+    while(1){
+        int br=0;
 
         rl = readline(buf, LINE_BLOCK_SIZE);
         if (rl == -1) {
             break;
-	      }        
+        }        
 
         if((request = check_command(buf)) != NULL ){
-             //fd_serverFIFO = open(serverFIFO, O_WRONLY);
-	           write(fd_serverFIFO, request, LINE_BLOCK_SIZE);
-             fd_clienteFIFO = open(clienteFIFO, O_RDONLY);
+            write(fd_serverFIFO, request, LINE_BLOCK_SIZE);
+            fd_clienteFIFO = open(clienteFIFO, O_RDONLY);
 
-             while((br = read(fd_clienteFIFO, reply, LINE_BLOCK_SIZE))<=0);
-             write(1,reply, strlen(reply));
-             close(fd_clienteFIFO);
-
-
-        } else{
+            while((br = read(fd_clienteFIFO, reply, LINE_BLOCK_SIZE))<=0);
+            write(1,reply, strlen(reply));
+                
+            close(fd_clienteFIFO);
+        }
+        else{
             write(1, "Invalid comand\n", 15);
         }
 
@@ -155,6 +154,8 @@ int main(){
         memset(buf,0, LINE_BLOCK_SIZE);
         free(request);
     }
+    
     close(fd_serverFIFO);
     return 0;
 }
+

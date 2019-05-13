@@ -125,19 +125,17 @@ int main(){
     }
 
     while (read(fd_serverFIFO, buf, LINE_BLOCK_SIZE) > 0){
-	     char *reply;
-       snprintf(clienteFIFO, 128, "database/clienteFIFO%s", getFIFO(strdup(buf)));
-
-       fd_clienteFIFO = open(clienteFIFO, O_WRONLY);
-	     reply = exec_request(buf);
-
-       write(fd_clienteFIFO, reply, LINE_BLOCK_SIZE);
-       close(fd_clienteFIFO);
-       free(reply);
-
-       memset(buf,0,LINE_BLOCK_SIZE);
+        char *reply;
+        snprintf(clienteFIFO, 128, "database/clienteFIFO%s", getFIFO(strdup(buf)));
+        fd_clienteFIFO = open(clienteFIFO, O_WRONLY);
+        reply = exec_request(buf);
+        write(fd_clienteFIFO, reply, LINE_BLOCK_SIZE);
+        close(fd_clienteFIFO);
+        free(reply);
+        memset(buf,0,LINE_BLOCK_SIZE);
     }
 
-  	 close(fd_serverFIFO);
-	   return 0;
+    close(fd_serverFIFO);
+    return 0;
 }
+

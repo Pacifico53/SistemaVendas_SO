@@ -159,8 +159,9 @@ int save_name(char* name){
 void print_artigo(Artigo a){
     char str[256] = "";
 
-    snprintf(str, 256, "===========\nNome = %s\nPosicao do Nome = %d\nPreço = %d\nCodigo = %d\n===========\n",
-                        get_nome(a), get_index_nome(a), get_preco(a), get_code(a));
+    snprintf(str, 256, "===========\nNome = %s\nPosicao do Nome = %d\nPreço = %d\nCodigo = %d\nStock = %d\n===========\n",
+                        get_nome(a), get_index_nome(a), get_preco(a), get_code(a), get_stock(a));
 
     write(1, str, strlen(str));
 }
+
