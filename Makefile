@@ -13,7 +13,7 @@ clienteVendas:
 	$(CC) $(CFLAGS) -o cv src/cv.c src/lib/artigo.c
 
 agregador:
-	$(CC) $(CFLAGS) -o ag src/ag.c src/lib/artigo.c
+	$(CC) $(CFLAGS) -o ag src/ag.c
 
 scripts:
 	$(CC) $(CFLAGS) -o scriptMA test_scripts/script1.c

@@ -11,10 +11,11 @@
 char* agregate(int code){
     int fd = open("database/VENDAS", O_RDONLY);
     char result[32] = "";
-    char buf[64] = "";
+    char buf[33] = "";
     int stock = 0, money = 0;
 
-    while((read(fd, buf, 64)) > 0){
+    while((read(fd, buf, 33)) > 0){
+        printf("\"%s\"\n", buf);
         char *str = strdup(buf);
         char *token = strtok(str, " ");
         char *info[3];
