@@ -43,7 +43,7 @@ Artigo seek_artigo(int code){
     a->nome = atoi(info[0]);
     a->preco = atoi(info[1]);
     a->codigo = code;
-
+    close(fd);
     return a;
 }
 
@@ -164,4 +164,3 @@ void print_artigo(Artigo a){
 
     write(1, str, strlen(str));
 }
-

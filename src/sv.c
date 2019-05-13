@@ -47,16 +47,16 @@ char* update_stock(int code, int stock){
 
 void save_venda(int code, int stock){
     int fd = open("database/VENDAS", O_WRONLY | O_APPEND);
-    char venda[63] = "";
+    char venda[LINE_BLOCK_SIZE] = "";
     stock = stock * -1;
 
     Artigo a = seek_artigo(code);
     if (a) {
         int stockA = get_stock(a);
         int stockFinal = stockA-stock >= 0 ? stock : stockA;
-        snprintf(venda, 63, "%d %d %d",
+        snprintf(venda, LINE_BLOCK_SIZE, "%d %d %d",
                 code, stockFinal, get_preco(a)*stockFinal);
-        write(fd, venda, 63);
+        write(fd, venda, LINE_BLOCK_SIZE);
         write(fd, "\n", 1);
     }
     close(fd);
@@ -120,23 +120,24 @@ int main(){
         perror("sv creating serverFIFO");
     }
 
-    while (1){
-        char *reply;
-        if ((fd_serverFIFO = open(serverFIFO, O_RDONLY)) == -1){
-          perror("sv opening serverFIFO");
-        }
-
-        if(read(fd_serverFIFO, buf, LINE_BLOCK_SIZE) > 0){
-            reply = exec_request(strdup(buf));
-            snprintf(clienteFIFO, 128, "database/clienteFIFO%s", getFIFO(strdup(buf)));
-            fd_clienteFIFO = open(clienteFIFO, O_WRONLY);
-            write(fd_clienteFIFO, reply, LINE_BLOCK_SIZE);
-            free(reply);
-            close(fd_clienteFIFO);
-        }
-        memset(buf,0,LINE_BLOCK_SIZE);
+    if ((fd_serverFIFO = open(serverFIFO, O_RDWR)) == -1){
+      perror("sv opening serverFIFO");
     }
 
-	return 0;
-}
+    while (read(fd_serverFIFO, buf, LINE_BLOCK_SIZE) > 0){
+	     char *reply;
+       snprintf(clienteFIFO, 128, "database/clienteFIFO%s", getFIFO(strdup(buf)));
 
+       fd_clienteFIFO = open(clienteFIFO, O_WRONLY);
+	     reply = exec_request(buf);
+
+       write(fd_clienteFIFO, reply, LINE_BLOCK_SIZE);
+       close(fd_clienteFIFO);
+       free(reply);
+
+       memset(buf,0,LINE_BLOCK_SIZE);
+    }
+
+  	 close(fd_serverFIFO);
+	   return 0;
+}

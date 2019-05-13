@@ -10,7 +10,7 @@
 
 #define LINE_BLOCK_SIZE 32
 
-int readline(char *buffer, int size){   //retorna os bytes lidos
+int readline(char *buffer, int size){
     int i = 0;
     char c;
     int bytes = 0;
@@ -26,7 +26,7 @@ int readline(char *buffer, int size){   //retorna os bytes lidos
     if (bytes == 0) {
         return -1;
     }
-    buffer[i] = '\0'; // making sure it's 0-terminated
+    buffer[i] = '\0';
     return i;
 }
 
@@ -49,13 +49,13 @@ int isNumber(char* str){
 
 char* build_request_msg(char* cmds0, char* cmds1, int type){
     if(type == 1){
-        char* request = malloc(sizeof(LINE_BLOCK_SIZE));
+        char* request = malloc(LINE_BLOCK_SIZE);
         snprintf(request, LINE_BLOCK_SIZE, "%s %d", cmds0, getpid());
         return request;
     }
 
     if(type == 2){
-        char* request = malloc(sizeof(LINE_BLOCK_SIZE));
+        char* request = malloc(LINE_BLOCK_SIZE);
         snprintf(request, LINE_BLOCK_SIZE, "%s %s %d", cmds0, cmds1, getpid());
         return request;
     }
@@ -120,34 +120,33 @@ int main(){
       perror("cv Creating clienteFIFO");
     }
 
-    while (1){
-        char *request;
-        char buf[LINE_BLOCK_SIZE];
-        char reply[LINE_BLOCK_SIZE];
-        memset(reply, 0, LINE_BLOCK_SIZE);
-        memset(buf,0, LINE_BLOCK_SIZE);
+   if( (fd_serverFIFO = open(serverFIFO, O_WRONLY)) == -1){
+      perror("cv Opening fd serverFIFO");
+    }
 
-        if( (fd_serverFIFO = open(serverFIFO, O_WRONLY)) == -1){
-          perror("cv Opening fd serverFIFO");
-        }
-        // Take an input from user.
+
+      char *request;
+      char buf[LINE_BLOCK_SIZE];
+    	char reply[LINE_BLOCK_SIZE];
+
+     while(1){
+	      int br=0;
+
         rl = readline(buf, LINE_BLOCK_SIZE);
         if (rl == -1) {
             break;
-        }
+	      }        
 
-        if((request = check_command(strdup(buf))) != NULL ){
-            //Write the input on FIFO and close it
-            usleep(50);
-            write(fd_serverFIFO, request, LINE_BLOCK_SIZE);
-            close(fd_serverFIFO);
+        if((request = check_command(buf)) != NULL ){
+             //fd_serverFIFO = open(serverFIFO, O_WRONLY);
+	           write(fd_serverFIFO, request, LINE_BLOCK_SIZE);
+             fd_clienteFIFO = open(clienteFIFO, O_RDONLY);
 
-            fd_clienteFIFO = open(clienteFIFO, O_RDONLY);
-            read(fd_clienteFIFO, reply, LINE_BLOCK_SIZE);
-            write(1,reply, strlen(reply));
-            close(fd_clienteFIFO);
-            memset(reply, 0, LINE_BLOCK_SIZE);
-            memset(buf,0, LINE_BLOCK_SIZE);
+             while((br = read(fd_clienteFIFO, reply, LINE_BLOCK_SIZE))<=0);
+             write(1,reply, strlen(reply));
+             close(fd_clienteFIFO);
+
+
         } else{
             write(1, "Invalid comand\n", 15);
         }
@@ -156,6 +155,6 @@ int main(){
         memset(buf,0, LINE_BLOCK_SIZE);
         free(request);
     }
+    close(fd_serverFIFO);
     return 0;
 }
-
